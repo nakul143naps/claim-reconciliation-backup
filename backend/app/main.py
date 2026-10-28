@@ -110,3 +110,20 @@ app.include_router(health_router, prefix="/api")
 app.include_router(summary_router, prefix="/api")
 app.include_router(claims_router, prefix="/api")
 app.include_router(remittances_router, prefix="/api")
+
+
+@app.get("/", include_in_schema=False)
+def root():
+    """Friendly root endpoint pointing to interactive documentation."""
+    return {
+        "name": "Stitch Fin — Claim Reconciliation API",
+        "version": "1.0.0",
+        "status": "online",
+        "interactive_docs": "/docs",
+        "endpoints": {
+            "health": "/api/health",
+            "summary": "/api/summary",
+            "claims": "/api/claims",
+            "unmatched_remittances": "/api/remittances/unmatched",
+        },
+    }
