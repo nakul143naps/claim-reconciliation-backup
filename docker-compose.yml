@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: claim_reconciliation_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: claim_reconciliation
+      MYSQL_USER: stitch_user
+      MYSQL_PASSWORD: stitch_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  mysql_data:
