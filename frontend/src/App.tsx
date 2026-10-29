@@ -31,7 +31,7 @@ export const App: React.FC = () => {
   const [claims, setClaims] = useState<ClaimListItem[]>([]);
   const [totalClaims, setTotalClaims] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
-  const [pageSize] = useState<number>(10);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [payerFilter, setPayerFilter] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [flagFilter, setFlagFilter] = useState<string>('');
@@ -290,6 +290,10 @@ export const App: React.FC = () => {
               claimIdFilter={claimIdFilter}
               isLoading={loadingClaims}
               onPageChange={(p) => setPage(p)}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setPage(1);
+              }}
               onPayerChange={(payer) => {
                 setPayerFilter(payer);
                 setPage(1);
