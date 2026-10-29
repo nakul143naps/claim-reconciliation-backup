@@ -18,6 +18,10 @@ export const FAQSection: React.FC = () => {
       a: 'Financial balance and clinical denial history are independent dimensions. For example, in claim C1007, the payer initially rejected the claim under CO-197 ($0 paid). Once the clinic resolved the authorization, the payer issued remittance R1007 paying $110.00 with a $40.00 contractual write-off. Mathematically, the claim is balanced ($150 - $110 - $40 = $0). Operationally, billing specialists need to know the claim required an appeal. Stitch Fin retains complete remittance history rather than overwriting prior rows.',
     },
     {
+      q: 'How is the "Amount Not Yet Received" calculated, and what does it include?',
+      a: 'The Amount Not Yet Received represents revenue submitted on claims that has not arrived as cash in the clinic bank account. Of $1,700.00 total billed charges, $990.00 has arrived as matched cash, leaving $710.00 gross cash pending from payers. Factoring in $140.00 of agreed contractual adjustments and $75.00 of patient responsibility, the Net Unsettled AR is $495.00 (consisting of $435.00 discrepancy across 6 unbalanced claims requiring appeal, plus $60.00 from Claim C1005 awaiting payer initial adjudication).',
+    },
+    {
       q: 'Why is the calculated difference null for claims with no remittance?',
       a: 'Treating an unremitted claim as having a confirmed $60.00 outstanding balance is an accounting error. Until the payer adjudicates the claim, the clinic does not know what portion will be covered, contractually discounted (e.g., CO-45), or shifted to patient copay. Stitch Fin marks status as no_remittance with a null difference, preventing false assumptions of collectible debt.',
     },

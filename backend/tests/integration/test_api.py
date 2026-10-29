@@ -55,6 +55,10 @@ def test_reconciliation_summary(client: TestClient):
     assert data["unmatched_remittance_paid_cents"] == 5000
     assert data["claims_with_denial_history"] == 4
     assert data["claims_flagged_for_review"] == 1
+    assert data["uncollected_cash_cents"] == 71000
+    assert data["net_unsettled_cents"] == 49500
+    assert data["total_adjustment_cents"] == 14000
+    assert data["total_patient_responsibility_cents"] == 7500
 
 
 def test_claims_list_default_pagination(client: TestClient):

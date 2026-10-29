@@ -64,12 +64,41 @@ class ClaimRepository:
                 ),
                 0,
             ),
+            func.coalesce(
+                func.sum(
+                    case(
+                        (Remittance.claim_id.isnot(None), Remittance.adjustment_cents),
+                        else_=0,
+                    )
+                ),
+                0,
+            ),
+            func.coalesce(
+                func.sum(
+                    case(
+                        (Remittance.claim_id.isnot(None), Remittance.patient_responsibility_cents),
+                        else_=0,
+                    )
+                ),
+                0,
+            ),
         ).first()
 
         all_remittance_paid_cents = remit_agg[0] if remit_agg else 0
         matched_paid_cents = remit_agg[1] if remit_agg else 0
         unmatched_remittance_count = remit_agg[2] if remit_agg else 0
         unmatched_remittance_paid_cents = remit_agg[3] if remit_agg else 0
+        total_adjustment_cents = remit_agg[4] if remit_agg else 0
+        total_patient_responsibility_cents = remit_agg[5] if remit_agg else 0
+
+        uncollected_cash_cents = max(0, total_billed_cents - matched_paid_cents)
+        net_unsettled_cents = max(
+            0,
+            total_billed_cents
+            - matched_paid_cents
+            - total_adjustment_cents
+            - total_patient_responsibility_cents,
+        )
 
         # 3. Derive claim-level statuses and flags by loading claims with matched remittances
         claims = (
@@ -118,6 +147,10 @@ class ClaimRepository:
             unmatched_remittance_paid_cents=unmatched_remittance_paid_cents,
             claims_with_denial_history=denial_history_count,
             claims_flagged_for_review=flagged_for_review_count,
+            uncollected_cash_cents=uncollected_cash_cents,
+            net_unsettled_cents=net_unsettled_cents,
+            total_adjustment_cents=total_adjustment_cents,
+            total_patient_responsibility_cents=total_patient_responsibility_cents,
         )
 
     def get_claims_paginated(

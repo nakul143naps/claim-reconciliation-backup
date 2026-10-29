@@ -19,3 +19,19 @@ class ReconciliationSummary(BaseModel):
     claims_flagged_for_review: int = Field(
         description="Claims with review anomalies (payment exceeds billed or payer mismatch)"
     )
+    uncollected_cash_cents: int = Field(
+        default=0,
+        description="Gross billed amount not yet received as cash (total_billed_cents - matched_paid_cents)",
+    )
+    net_unsettled_cents: int = Field(
+        default=0,
+        description="Net outstanding unresolved variance after adjustments and patient responsibility",
+    )
+    total_adjustment_cents: int = Field(
+        default=0,
+        description="Total contractual adjustments write-offs across matched remittances",
+    )
+    total_patient_responsibility_cents: int = Field(
+        default=0,
+        description="Total patient copays and deductibles across matched remittances",
+    )

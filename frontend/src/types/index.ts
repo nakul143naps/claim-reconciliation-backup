@@ -63,6 +63,10 @@ export interface ReconciliationSummary {
   unmatched_remittance_paid_cents: number;
   claims_with_denial_history: number;
   claims_flagged_for_review: number;
+  uncollected_cash_cents: number;
+  net_unsettled_cents: number;
+  total_adjustment_cents: number;
+  total_patient_responsibility_cents: number;
 }
 
 export interface UnmatchedRemittanceItem {
