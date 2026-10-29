@@ -1,5 +1,16 @@
 # Stitch Financial — Claim Reconciliation Engine
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Cloudflare_Tunnel-2563eb?style=for-the-badge&logo=cloudflare)](https://fairfield-reduction-penny-housewares.trycloudflare.com)
+[![Tests Passing](https://img.shields.io/badge/Tests-38%2F38_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
+[![MySQL 8.0](https://img.shields.io/badge/Database-MySQL_8.0_Docker-f59e0b?style=for-the-badge&logo=mysql)](https://github.com/nakul143naps/claim-reconciliation)
+
+> 🌐 **Interactive Live Deployment**: [https://fairfield-reduction-penny-housewares.trycloudflare.com](https://fairfield-reduction-penny-housewares.trycloudflare.com)  
+> 📖 **Interview Master Guide & Top 20 SQL Queries**: [`INTERVIEW_MASTER_GUIDE.md`](./INTERVIEW_MASTER_GUIDE.md)  
+> 📋 **Machine Transfer & Complete Architecture**: [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md)  
+> 🎯 **Quick Defense Cheatsheet**: [`INTERVIEW_PREP_CHEAT_SHEET.md`](./INTERVIEW_PREP_CHEAT_SHEET.md)
+
+---
+
 A production-grade claims reconciliation and audit platform designed for healthcare billing operations. This system ingests medical billing claims and payer remittances, calculates claim-level balances with deterministic integer arithmetic, preserves complete remittance audit trails (including prior denial history), and isolates orphaned payments.
 
 ---
