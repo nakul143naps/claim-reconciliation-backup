@@ -27,19 +27,19 @@ export const HeroSection: React.FC<Props> = ({ onScrollToLedger, onRequestDemo }
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem', margin: '1.5rem 0 2rem 0' }}>
         <div className="hero-pill">
           <CheckCircle2 size={14} style={{ color: 'var(--success)' }} />
-          <span>100% Integer Cents Precision</span>
+          <span>Zero Calculation &amp; Rounding Errors</span>
         </div>
         <div className="hero-pill">
           <Shield size={14} style={{ color: 'var(--primary)' }} />
-          <span>Automated CARC/RARC Denial Tracking</span>
+          <span>Instant Payer Denial Tracking</span>
         </div>
         <div className="hero-pill">
           <Zap size={14} style={{ color: '#d97706' }} />
-          <span>Orphan Remittance Quarantine</span>
+          <span>Unmatched Payer Cash Protection</span>
         </div>
         <div className="hero-pill">
           <TrendingUp size={14} style={{ color: '#0284c7' }} />
-          <span>Multi-Payer Contract Variance Detection</span>
+          <span>Automatic Underpayment Detection</span>
         </div>
       </div>
 

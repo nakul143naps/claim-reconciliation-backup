@@ -6,32 +6,36 @@ export const FAQSection: React.FC = () => {
 
   const faqs = [
     {
-      q: 'How does Stitch Fin eliminate floating-point calculation errors in claims billing?',
-      a: 'Standard binary floating-point numbers in Python and JavaScript suffer from IEEE 754 precision drift (e.g. 0.1 + 0.2 = 0.30000000000000004). In healthcare ledgers, even one-cent discrepancies fail audits. Stitch Fin stores and calculates all currency amounts strictly as integer cents (BIGINT in MySQL and integer types across services). Division into dollars occurs solely at the UI display layer, guaranteeing 100% mathematical precision.',
+      q: 'How does Stitch Fin guarantee zero calculation or rounding errors?',
+      a: 'In standard computer programs, calculating with decimals (like 0.1 + 0.2) causes tiny rounding errors that fail financial audits. Stitch Fin stores and calculates all money strictly in whole integer cents (e.g., a $150.00 bill is stored as 15,000 cents). Conversion to dollars happens only on screen, guaranteeing 100% exact math with zero penny drift.',
     },
     {
-      q: 'What happens when a payer sends payment for an unknown or missing claim?',
-      a: 'In real-world billing, payers often remit cash for historic, transferred, or miskeyed claim IDs (e.g. remit R1012 referencing missing claim C9999). Discarding the record loses cash tracking, while inventing a dummy claim creates phantom accounts receivable. Stitch Fin uses a dual-key architecture: the exact source string is preserved in source_claim_id while the foreign key claim_id is set to NULL. The cash ($50.00) is tracked in total remittances ($1,040.00) but safely quarantined from matched claims so balances are never contaminated.',
+      q: 'What is "Unmatched Cash", and what happens if an insurance check references a missing claim?',
+      a: 'Sometimes an insurance company sends a payment check with a mistyped or missing claim number (like remittance R1012 for $50.00 pointing to claim C9999, which does not exist in our clinic). Rather than deleting the check or inventing a fake patient, Stitch Fin puts this money in an "Unmatched Cash Queue" so an accountant can investigate it without corrupting the main claims ledger.',
     },
     {
-      q: 'Why can a claim be marked "Balanced" while still displaying a "Denial History" flag?',
-      a: 'Financial balance and clinical denial history are independent dimensions. For example, in claim C1007, the payer initially rejected the claim under CO-197 ($0 paid). Once the clinic resolved the authorization, the payer issued remittance R1007 paying $110.00 with a $40.00 contractual write-off. Mathematically, the claim is balanced ($150 - $110 - $40 = $0). Operationally, billing specialists need to know the claim required an appeal. Stitch Fin retains complete remittance history rather than overwriting prior rows.',
+      q: 'How does the system track Payer Denials, and why can a claim be Balanced with Denial History?',
+      a: 'When an insurance company rejects a claim (for example, missing paperwork or an uncovered procedure), Stitch Fin flags it immediately with a Denial badge so billing staff can file an appeal. If the clinic wins the appeal and gets paid in full (making the final balance $0.00), the system keeps the "Denial History" badge so managers know that claim originally had a problem and required extra follow-up to collect.',
+    },
+    {
+      q: 'How does Automatic Underpayment Detection work?',
+      a: 'When insurance pays less than what was billed and agreed upon, the system marks the claim as "Unbalanced" and highlights the exact dollar gap. For example, on claim C1004, the clinic billed $150.00, but insurance only sent $100.00 with no explanation—so the system flags a $50.00 underpayment requiring follow-up with the payer.',
     },
     {
       q: 'How is the "Amount Not Yet Received" calculated, and what does it include?',
-      a: 'The Amount Not Yet Received represents revenue submitted on claims that has not arrived as cash in the clinic bank account. Of $1,700.00 total billed charges, $990.00 has arrived as matched cash, leaving $710.00 gross cash pending from payers. Factoring in $140.00 of agreed contractual adjustments and $75.00 of patient responsibility, the Net Unsettled AR is $495.00 (consisting of $435.00 discrepancy across 6 unbalanced claims requiring appeal, plus $60.00 from Claim C1005 awaiting payer initial adjudication).',
+      a: 'Out of the $1,700.00 total billed by the clinic, $990.00 has arrived as cash, leaving $710.00 in cash still pending. After factoring in pre-agreed insurance discounts ($140.00 write-offs) and patient copays ($75.00), the Net Unsettled balance is $495.00 (consisting of $435.00 across 6 unbalanced claims requiring appeal, plus $60.00 from Claim C1005 awaiting insurance adjudication).',
     },
     {
-      q: 'Why is the calculated difference null for claims with no remittance?',
-      a: 'Treating an unremitted claim as having a confirmed $60.00 outstanding balance is an accounting error. Until the payer adjudicates the claim, the clinic does not know what portion will be covered, contractually discounted (e.g., CO-45), or shifted to patient copay. Stitch Fin marks status as no_remittance with a null difference, preventing false assumptions of collectible debt.',
+      q: 'What is the difference between a Contractual Write-Off and a Patient Copay?',
+      a: 'A Contractual Write-Off (like code CO-45) is a legal discount pre-agreed between the clinic and the insurance company—nobody pays this amount, and it is simply erased from the bill so the account balances. A Patient Copay (like code PR-3) is the patient’s personal out-of-pocket share that the clinic collects directly from the patient at the front desk.',
+    },
+    {
+      q: 'Why is the difference shown as empty (Null) for claims with No Remittance?',
+      a: 'If an insurance company has not responded to a claim yet (like Claim C1005 for $60.00), we do not know yet how much they will pay or discount. Marking it as an overdue debt right away would be an accounting mistake, so the system marks it as "Awaiting Response" with an empty difference until the insurance decision arrives.',
     },
     {
       q: 'What formats can the reconciliation audit ledger be exported in?',
-      a: 'The platform supports one-click export in CSV format (for Excel, Google Sheets, and accounting audits), structured JSON (for automated ERP and clearinghouse integrations), and formatted Print/PDF view.',
-    },
-    {
-      q: 'How does the system prevent duplicate batch files from double-counting revenue?',
-      a: 'Stitch Fin enforces a three-tier idempotency model. When a file is re-submitted, records with identical normalized data are classified as duplicate_noop and skipped without incrementing totals. If an incoming row shares an existing ID but has conflicting amounts, it is rejected as conflicting_existing_id with a row-level error log. Unique database constraints serve as the final integrity safeguard.',
+      a: 'The platform supports one-click export in CSV format (for Excel and spreadsheet audits), structured JSON (for automated hospital software integration), and formatted Print / PDF view for meetings and printed records.',
     },
   ];
 
@@ -46,7 +50,7 @@ export const FAQSection: React.FC = () => {
           Everything You Need to Know
         </h2>
         <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-          Common questions about Stitch Fin’s reconciliation logic, data integrity, and compliance standards.
+          Simple, plain-English explanations of how Stitch Fin reconciles claims, catches underpayments, and protects clinic revenue.
         </p>
       </div>
 
