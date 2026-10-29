@@ -268,22 +268,24 @@ body {
 /* Filter controls bar */
 .filter-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-wrap: nowrap;
+  gap: 0.75rem;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
   background: #ffffff;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--neutral-border);
   border-radius: var(--radius);
+  overflow-x: auto;
 }
 
 .filter-inputs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
   align-items: center;
+  flex-shrink: 1;
 }
 
 .input-field, .select-field {

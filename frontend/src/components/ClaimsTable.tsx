@@ -80,14 +80,14 @@ export const ClaimsTable: React.FC<Props> = ({
         <div className="filter-inputs">
           {/* Claim ID & Patient search */}
           <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-            <Search size={14} style={{ position: 'absolute', left: '10px', color: '#94a3b8' }} />
+            <Search size={14} style={{ position: 'absolute', left: '8px', color: '#94a3b8' }} />
             <input
               type="text"
-              placeholder="Search Claim ID / Patient..."
+              placeholder="Search ID/Patient..."
               value={claimIdFilter}
               onChange={(e) => onClaimIdChange(e.target.value)}
               className="input-field"
-              style={{ paddingLeft: '32px', width: '190px' }}
+              style={{ paddingLeft: '28px', width: '160px', height: '32px', fontSize: '0.825rem' }}
             />
           </div>
 
@@ -96,6 +96,7 @@ export const ClaimsTable: React.FC<Props> = ({
             value={payerFilter}
             onChange={(e) => onPayerChange(e.target.value)}
             className="select-field"
+            style={{ height: '32px', fontSize: '0.825rem', padding: '0.2rem 0.5rem' }}
           >
             <option value="">All Payers</option>
             <option value="Northwind Health">Northwind Health</option>
@@ -108,6 +109,7 @@ export const ClaimsTable: React.FC<Props> = ({
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
             className="select-field"
+            style={{ height: '32px', fontSize: '0.825rem', padding: '0.2rem 0.5rem' }}
           >
             <option value="">All Statuses</option>
             <option value="balanced">Balanced</option>
@@ -120,8 +122,9 @@ export const ClaimsTable: React.FC<Props> = ({
             value={flagFilter}
             onChange={(e) => onFlagChange(e.target.value)}
             className="select-field"
+            style={{ height: '32px', fontSize: '0.825rem', padding: '0.2rem 0.5rem' }}
           >
-            <option value="">All Operational Flags</option>
+            <option value="">All Flags</option>
             <option value="denial_history">Denial History (CO-*)</option>
             <option value="payment_exceeds_billed">Payment &gt; Billed</option>
             <option value="payer_mismatch">Payer Mismatch</option>
@@ -129,22 +132,27 @@ export const ClaimsTable: React.FC<Props> = ({
 
           {/* Reset Filters */}
           {(payerFilter || statusFilter || flagFilter || claimIdFilter) && (
-            <button className="btn" onClick={onResetFilters} title="Reset all active filters">
-              <RotateCcw size={13} />
+            <button
+              className="btn"
+              onClick={onResetFilters}
+              title="Reset all active filters"
+              style={{ height: '32px', padding: '0.2rem 0.6rem', fontSize: '0.8rem' }}
+            >
+              <RotateCcw size={12} />
               <span>Reset</span>
             </button>
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'nowrap', whiteSpace: 'nowrap', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'nowrap', whiteSpace: 'nowrap', flexShrink: 0 }}>
           {/* Entries per page selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.825rem', color: 'var(--text-muted)' }}>
             <span>Show:</span>
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               className="select-field"
-              style={{ padding: '0.2rem 0.45rem', fontSize: '0.85rem', height: '32px' }}
+              style={{ padding: '0.2rem 0.4rem', fontSize: '0.825rem', height: '32px' }}
               title="Select number of entries per page"
             >
               <option value={10}>10</option>
@@ -153,7 +161,7 @@ export const ClaimsTable: React.FC<Props> = ({
             </select>
           </div>
 
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '0.825rem', color: 'var(--text-muted)' }}>
             Showing <strong>{claims.length}</strong> of <strong>{total}</strong> claims
           </div>
 
@@ -163,11 +171,11 @@ export const ClaimsTable: React.FC<Props> = ({
               className="btn btn-primary"
               onClick={() => setIsExportMenuOpen((prev) => !prev)}
               title="Export complete reconciliation audit ledger in multiple formats"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', height: '32px', padding: '0.25rem 0.75rem', fontSize: '0.825rem' }}
             >
-              <Download size={14} />
+              <Download size={13} />
               <span>Export Ledger</span>
-              <ChevronDown size={14} style={{ transform: isExportMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
+              <ChevronDown size={13} style={{ transform: isExportMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
             </button>
 
             {isExportMenuOpen && (
