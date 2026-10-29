@@ -207,6 +207,20 @@ class ImportService:
                     )
                 )
 
+        # Auto-link any previously unmatched remittances in database that now match newly imported claims
+        if seen_in_batch:
+            new_claim_ids = list(seen_in_batch.keys())
+            waiting_remits = (
+                self.db.query(Remittance)
+                .filter(
+                    Remittance.claim_id.is_(None),
+                    Remittance.source_claim_id.in_(new_claim_ids),
+                )
+                .all()
+            )
+            for r in waiting_remits:
+                r.claim_id = r.source_claim_id
+
         self.db.commit()
         return result
 
@@ -298,7 +312,13 @@ class ImportService:
                 # Check in DB
                 existing = self.db.query(Remittance).filter(Remittance.remit_id == remit_id).first()
                 if existing:
-                    if self._is_identical_remittance(existing, candidate):
+                    # If existing was unlinked but now has a matching claim, update link
+                    if existing.claim_id is None and linked_claim_id is not None:
+                        existing.claim_id = linked_claim_id
+                        result.inserted += 1
+                        seen_in_batch[remit_id] = existing
+                        continue
+                    elif self._is_identical_remittance(existing, candidate):
                         result.duplicate_noop += 1
                         seen_in_batch[remit_id] = existing
                         continue
