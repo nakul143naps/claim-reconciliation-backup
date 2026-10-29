@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Calendar, UserCheck, ExternalLink } from 'lucide-react';
+import { Layers, Calendar, UserCheck } from 'lucide-react';
 
 interface Props {
   onRequestDemo: () => void;
@@ -71,14 +71,11 @@ export const Navbar: React.FC<Props> = ({
             Features
           </a>
           <a
-            href="http://localhost:8000/docs"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#faq"
             className="tab-btn"
-            style={{ fontSize: '0.875rem', padding: '0.5rem 0.85rem', textDecoration: 'none', color: '#475569', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+            style={{ fontSize: '0.875rem', padding: '0.5rem 0.85rem', textDecoration: 'none', color: '#475569' }}
           >
-            <span>API Docs</span>
-            <ExternalLink size={12} />
+            FAQ
           </a>
         </div>
 

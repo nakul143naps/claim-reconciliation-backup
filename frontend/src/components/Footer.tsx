@@ -57,8 +57,8 @@ export const Footer: React.FC<Props> = ({ onRequestDemo, onOpenSignIn }) => {
               <a href="#features" style={{ color: 'inherit', textDecoration: 'none' }}>Feature Architecture</a>
             </li>
             <li>
-              <a href="http://localhost:8000/docs" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
-                FastAPI Swagger Spec ↗
+              <a href="#faq" style={{ color: 'inherit', textDecoration: 'none' }}>
+                Frequently Asked Questions
               </a>
             </li>
             <li>

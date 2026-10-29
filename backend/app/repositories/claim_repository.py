@@ -313,3 +313,50 @@ class ClaimRepository:
             ])
 
         return output.getvalue()
+
+    def export_reconciliation_json(self) -> str:
+        """Generate complete reconciliation audit ledger as formatted JSON string."""
+        import json
+
+        claims = (
+            self.db.query(Claim)
+            .options(selectinload(Claim.remittances))
+            .order_by(Claim.claim_id.asc())
+            .all()
+        )
+
+        records = []
+        for claim in claims:
+            matched_remits = [r for r in claim.remittances if r.claim_id == claim.claim_id]
+            totals, status, flags, _ = calculate_claim_reconciliation(
+                billed_cents=claim.billed_cents,
+                matched_remittances=matched_remits,
+                claim_payer=claim.payer,
+            )
+
+            records.append({
+                "claim_id": claim.claim_id,
+                "patient_account": claim.patient_account,
+                "payer": claim.payer,
+                "service_date": claim.service_date.isoformat(),
+                "cpt": claim.cpt,
+                "billed_cents": claim.billed_cents,
+                "billed_dollars": f"{(claim.billed_cents / 100):.2f}",
+                "paid_cents": totals.paid_cents,
+                "paid_dollars": f"{(totals.paid_cents / 100):.2f}",
+                "adjustment_cents": totals.adjustment_cents,
+                "adjustment_dollars": f"{(totals.adjustment_cents / 100):.2f}",
+                "patient_responsibility_cents": totals.patient_responsibility_cents,
+                "patient_responsibility_dollars": f"{(totals.patient_responsibility_cents / 100):.2f}",
+                "difference_cents": totals.difference_cents,
+                "difference_dollars": f"{(totals.difference_cents / 100):.2f}" if totals.difference_cents is not None else None,
+                "status": status,
+                "flags": flags,
+                "matched_remittances_count": len(matched_remits),
+            })
+
+        return json.dumps({
+            "generated_at": func.now(),
+            "total_records": len(records),
+            "claims": records,
+        }, default=str, indent=2)

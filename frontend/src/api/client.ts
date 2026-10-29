@@ -78,7 +78,7 @@ export const api = {
     const qs = query.toString();
     return request<ClaimListResponse>(`/claims${qs ? `?${qs}` : ''}`);
   },
-  getExportUrl: () => `${API_BASE}/claims/export`,
+  getExportUrl: (format: 'csv' | 'json' = 'csv') => `${API_BASE}/claims/export?format=${format}`,
   getClaimById: (claimId: string) => request<ClaimDetail>(`/claims/${encodeURIComponent(claimId)}`),
   getUnmatchedRemittances: () => request<UnmatchedRemittancesResponse>('/remittances/unmatched'),
 };

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ClaimListItem } from '../types';
 import { formatCurrency, formatRawCents } from '../utils/formatters';
 import { StatusBadge } from './StatusBadge';
 import { FlagBadge } from './FlagBadge';
 import { api } from '../api/client';
-import { ChevronLeft, ChevronRight, Download, Eye, RotateCcw, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Eye, RotateCcw, Search, ChevronDown, FileText, Printer } from 'lucide-react';
 
 interface Props {
   claims: ClaimListItem[];
@@ -44,9 +44,32 @@ export const ClaimsTable: React.FC<Props> = ({
   onSelectClaim,
 }) => {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const exportDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target as Node)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleExportCsv = () => {
-    window.open(api.getExportUrl(), '_blank');
+    setIsExportMenuOpen(false);
+    window.open(api.getExportUrl('csv'), '_blank');
+  };
+
+  const handleExportJson = () => {
+    setIsExportMenuOpen(false);
+    window.open(api.getExportUrl('json'), '_blank');
+  };
+
+  const handlePrintPdf = () => {
+    setIsExportMenuOpen(false);
+    window.print();
   };
 
   return (
@@ -116,15 +139,119 @@ export const ClaimsTable: React.FC<Props> = ({
             Showing <strong>{claims.length}</strong> of <strong>{total}</strong> claims
           </div>
 
-          {/* Export Audit CSV Button */}
-          <button
-            className="btn btn-primary"
-            onClick={handleExportCsv}
-            title="Download complete reconciliation audit ledger as CSV"
-          >
-            <Download size={14} />
-            <span>Export Audit CSV</span>
-          </button>
+          {/* Multi-Format Export Dropdown */}
+          <div style={{ position: 'relative' }} ref={exportDropdownRef}>
+            <button
+              className="btn btn-primary"
+              onClick={() => setIsExportMenuOpen((prev) => !prev)}
+              title="Export complete reconciliation audit ledger in multiple formats"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}
+            >
+              <Download size={14} />
+              <span>Export Ledger</span>
+              <ChevronDown size={14} style={{ transform: isExportMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
+            </button>
+
+            {isExportMenuOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 'calc(100% + 6px)',
+                  background: '#ffffff',
+                  border: '1px solid var(--neutral-border)',
+                  borderRadius: '8px',
+                  boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+                  width: '230px',
+                  zIndex: 40,
+                  overflow: 'hidden',
+                  padding: '0.4rem',
+                }}
+              >
+                <div style={{ padding: '0.4rem 0.6rem', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>
+                  Select Export Format
+                </div>
+
+                <button
+                  onClick={handleExportCsv}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    padding: '0.6rem 0.75rem',
+                    background: 'transparent',
+                    border: 'none',
+                    borderRadius: '6px',
+                    textAlign: 'left',
+                    fontSize: '0.85rem',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <FileText size={16} style={{ color: 'var(--success)' }} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>CSV Format (.csv)</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Excel & Sheets audit trail</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={handleExportJson}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    padding: '0.6rem 0.75rem',
+                    background: 'transparent',
+                    border: 'none',
+                    borderRadius: '6px',
+                    textAlign: 'left',
+                    fontSize: '0.85rem',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <Download size={16} style={{ color: 'var(--primary)' }} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>JSON Format (.json)</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>ERP & clearinghouse integration</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={handlePrintPdf}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    padding: '0.6rem 0.75rem',
+                    background: 'transparent',
+                    border: 'none',
+                    borderRadius: '6px',
+                    textAlign: 'left',
+                    fontSize: '0.85rem',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <Printer size={16} style={{ color: '#6366f1' }} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>Print / Save PDF</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Formatted clinical ledger</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

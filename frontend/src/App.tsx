@@ -9,6 +9,7 @@ import { ClaimDetailModal } from './components/ClaimDetailModal';
 import { UnmatchedRemittancesTable } from './components/UnmatchedRemittancesTable';
 import { HowItWorksSection } from './components/HowItWorksSection';
 import { FeaturesSection } from './components/FeaturesSection';
+import { FAQSection } from './components/FAQSection';
 import { Footer } from './components/Footer';
 import { RequestDemoModal } from './components/RequestDemoModal';
 import { SignInModal } from './components/SignInModal';
@@ -112,12 +113,20 @@ export const App: React.FC = () => {
     setPage(1);
   };
 
+  const scrollToLedger = () => {
+    document.getElementById('live-ledger')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToClaims = () => {
+    document.getElementById('reconciliation-ledger')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const handleKpiStatusClick = (status: string) => {
     setActiveTab('hub');
     setStatusFilter(status);
     setFlagFilter('');
     setPage(1);
-    scrollToLedger();
+    scrollToClaims();
   };
 
   const handleKpiFlagClick = (flag: string) => {
@@ -125,11 +134,7 @@ export const App: React.FC = () => {
     setStatusFilter('');
     setFlagFilter(flag);
     setPage(1);
-    scrollToLedger();
-  };
-
-  const scrollToLedger = () => {
-    document.getElementById('reconciliation-ledger')?.scrollIntoView({ behavior: 'smooth' });
+    scrollToClaims();
   };
 
   return (
@@ -175,26 +180,29 @@ export const App: React.FC = () => {
           onRequestDemo={() => setIsDemoModalOpen(true)}
         />
 
-        {/* Live Reconciliation Ledger & KPI Cards Section in a Clean White Container */}
+        {/* Box 1: Live Settlement Ledger (KPI Summary Cards) in a Dedicated White Container */}
         <section
-          id="reconciliation-ledger"
+          id="live-ledger"
           style={{
             margin: '2.5rem 0',
             background: '#ffffff',
             border: '1px solid var(--neutral-border)',
             borderRadius: '12px',
-            padding: '2.5rem 2rem',
+            padding: '2rem',
             boxShadow: 'var(--shadow-sm)',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
                 Live Settlement Ledger
               </div>
               <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.5px', marginTop: '0.2rem' }}>
-                {activeTab === 'hub' ? 'Claims Reconciliation Workspace' : 'Unmatched Remittance Advice Queue'}
+                Executive Settlement &amp; Revenue Integrity Overview
               </h2>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+                Deterministic reconciliation metrics calculated across all active payers and adjudications.
+              </p>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -221,6 +229,31 @@ export const App: React.FC = () => {
               onFilterFlag={handleKpiFlagClick}
             />
           )}
+        </section>
+
+        {/* Box 2: Claims Reconciliation Workspace & Unmatched Remittances in a Distinct White Container */}
+        <section
+          id="reconciliation-ledger"
+          style={{
+            margin: '2.5rem 0',
+            background: '#ffffff',
+            border: '1px solid var(--neutral-border)',
+            borderRadius: '12px',
+            padding: '2rem',
+            boxShadow: 'var(--shadow-sm)',
+          }}
+        >
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
+              Reconciliation Workspace
+            </div>
+            <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.5px', marginTop: '0.2rem' }}>
+              {activeTab === 'hub' ? 'Claims Reconciliation Workspace' : 'Unmatched Remittance Advice Queue'}
+            </h2>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+              Search, filter, and audit matched claims or inspect orphaned payment remittances in real time.
+            </p>
+          </div>
 
           {/* Workspace Sub-Tabs for Claims vs Unmatched Remittances */}
           <div className="tabs" style={{ marginBottom: '1.5rem' }}>
@@ -292,6 +325,9 @@ export const App: React.FC = () => {
 
         {/* Features Showcase Section */}
         <FeaturesSection />
+
+        {/* FAQ Section (Inspired by ClaimBook / PayerWorks) */}
+        <FAQSection />
       </main>
 
       {/* Footer */}

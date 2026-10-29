@@ -157,6 +157,17 @@ def test_claims_export_csv(client: TestClient):
     assert "C1001" in lines[1]
 
 
+def test_claims_export_json(client: TestClient):
+    """GET /api/claims/export?format=json streams a valid reconciliation JSON ledger."""
+    response = client.get("/api/claims/export?format=json")
+    assert response.status_code == 200
+    assert "application/json" in response.headers["content-type"]
+    data = response.json()
+    assert data["total_records"] == 12
+    assert len(data["claims"]) == 12
+    assert data["claims"][0]["claim_id"] == "C1001"
+
+
 def test_claims_flag_filter(client: TestClient):
     """GET /api/claims?flag=denial_history filters to exactly 4 claims."""
     response = client.get("/api/claims?flag=denial_history")

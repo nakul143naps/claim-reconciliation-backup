@@ -489,3 +489,44 @@ body {
   from { transform: translateY(10px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* Print / PDF Export Styling */
+@media print {
+  .header,
+  .hero-banner,
+  #how-it-works,
+  #features,
+  #faq,
+  footer,
+  .filter-bar,
+  .tabs,
+  .btn,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  #reconciliation-ledger,
+  #live-ledger {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .data-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 11pt;
+  }
+
+  .data-table th,
+  .data-table td {
+    border-bottom: 1px solid #ddd !important;
+    padding: 8px !important;
+  }
+}

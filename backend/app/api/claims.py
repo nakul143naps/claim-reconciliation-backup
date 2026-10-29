@@ -64,9 +64,23 @@ def list_claims(
 
 
 @router.get("/export", response_class=Response)
-def export_claims(db: Session = Depends(get_db)):
-    """Export complete reconciliation audit ledger as a downloadable CSV."""
+def export_claims(
+    export_format: str = Query(default="csv", alias="format", description="Export format: 'csv' or 'json'"),
+    db: Session = Depends(get_db),
+):
+    """Export complete reconciliation audit ledger in requested format (CSV or JSON)."""
     repo = ClaimRepository(db)
+    clean_format = export_format.strip().lower()
+
+    if clean_format == "json":
+        json_data = repo.export_reconciliation_json()
+        return Response(
+            content=json_data,
+            media_type="application/json",
+            headers={"Content-Disposition": "attachment; filename=reconciliation_audit_ledger.json"},
+        )
+
+    # Default to CSV
     csv_data = repo.export_reconciliation_csv()
     return Response(
         content=csv_data,
