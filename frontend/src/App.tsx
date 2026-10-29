@@ -175,14 +175,24 @@ export const App: React.FC = () => {
           onRequestDemo={() => setIsDemoModalOpen(true)}
         />
 
-        {/* Live Reconciliation Ledger & KPI Cards Section */}
-        <div id="reconciliation-ledger" style={{ paddingTop: '2.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+        {/* Live Reconciliation Ledger & KPI Cards Section in a Clean White Container */}
+        <section
+          id="reconciliation-ledger"
+          style={{
+            margin: '2.5rem 0',
+            background: '#ffffff',
+            border: '1px solid var(--neutral-border)',
+            borderRadius: '12px',
+            padding: '2.5rem 2rem',
+            boxShadow: 'var(--shadow-sm)',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
                 Live Settlement Ledger
               </div>
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
+              <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.5px', marginTop: '0.2rem' }}>
                 {activeTab === 'hub' ? 'Claims Reconciliation Workspace' : 'Unmatched Remittance Advice Queue'}
               </h2>
             </div>
@@ -275,7 +285,7 @@ export const App: React.FC = () => {
               isLoading={loadingUnmatched}
             />
           )}
-        </div>
+        </section>
 
         {/* How It Works Section (Inspired by ClaimBook / RevSync) */}
         <HowItWorksSection />
