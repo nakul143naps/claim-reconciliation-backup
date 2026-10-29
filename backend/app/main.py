@@ -8,7 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from backend.app.api import claims_router, health_router, remittances_router, summary_router
+from backend.app.api import claims_router, health_router, import_router, remittances_router, summary_router
 from backend.app.core.config import settings
 from backend.app.db.session import init_db
 from backend.app.schemas.errors import ErrorDetail, ErrorResponse
@@ -110,6 +110,7 @@ app.include_router(health_router, prefix="/api")
 app.include_router(summary_router, prefix="/api")
 app.include_router(claims_router, prefix="/api")
 app.include_router(remittances_router, prefix="/api")
+app.include_router(import_router, prefix="/api")
 
 
 @app.get("/", include_in_schema=False)

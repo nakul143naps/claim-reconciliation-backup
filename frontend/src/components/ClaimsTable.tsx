@@ -4,7 +4,7 @@ import { formatCurrency, formatRawCents } from '../utils/formatters';
 import { StatusBadge } from './StatusBadge';
 import { FlagBadge } from './FlagBadge';
 import { api } from '../api/client';
-import { ChevronLeft, ChevronRight, Download, Eye, RotateCcw, Search, ChevronDown, FileText, Printer } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Eye, RotateCcw, Search, ChevronDown, FileText, Printer, Upload } from 'lucide-react';
 
 interface Props {
   claims: ClaimListItem[];
@@ -24,6 +24,7 @@ interface Props {
   onClaimIdChange: (claimId: string) => void;
   onResetFilters: () => void;
   onSelectClaim: (claimId: string) => void;
+  onOpenImportModal: () => void;
 }
 
 export const ClaimsTable: React.FC<Props> = ({
@@ -44,6 +45,7 @@ export const ClaimsTable: React.FC<Props> = ({
   onClaimIdChange,
   onResetFilters,
   onSelectClaim,
+  onOpenImportModal,
 }) => {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
@@ -164,6 +166,17 @@ export const ClaimsTable: React.FC<Props> = ({
           <div style={{ fontSize: '0.825rem', color: 'var(--text-muted)' }}>
             Showing <strong>{claims.length}</strong> of <strong>{total}</strong> claims
           </div>
+
+          {/* Import CSV Modal Trigger Button */}
+          <button
+            className="btn"
+            onClick={onOpenImportModal}
+            title="Import custom Claims or Remittances CSV file"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', height: '32px', padding: '0.25rem 0.75rem', fontSize: '0.825rem' }}
+          >
+            <Upload size={13} />
+            <span>Import CSV</span>
+          </button>
 
           {/* Multi-Format Export Dropdown */}
           <div style={{ position: 'relative' }} ref={exportDropdownRef}>

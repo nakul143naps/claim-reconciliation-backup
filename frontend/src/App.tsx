@@ -13,6 +13,7 @@ import { FAQSection } from './components/FAQSection';
 import { Footer } from './components/Footer';
 import { RequestDemoModal } from './components/RequestDemoModal';
 import { SignInModal } from './components/SignInModal';
+import { ImportCsvModal } from './components/ImportCsvModal';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
   // Modals state
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<string | null>('sarah.jenkins@metrohealth.org');
 
   // Summary state
@@ -135,6 +137,14 @@ export const App: React.FC = () => {
     setFlagFilter(flag);
     setPage(1);
     scrollToClaims();
+  };
+
+  const handleImportSuccess = () => {
+    loadInitialData();
+    loadClaims();
+    if (activeTab === 'unmatched') {
+      loadUnmatched();
+    }
   };
 
   return (
@@ -312,6 +322,7 @@ export const App: React.FC = () => {
               }}
               onResetFilters={handleResetFilters}
               onSelectClaim={(id) => setSelectedClaimId(id)}
+              onOpenImportModal={() => setIsImportModalOpen(true)}
             />
           )}
 
@@ -359,6 +370,13 @@ export const App: React.FC = () => {
         isOpen={isSignInModalOpen}
         onClose={() => setIsSignInModalOpen(false)}
         onSuccess={(email) => setCurrentUser(email)}
+      />
+
+      {/* Import CSV Modal with Benchmark Reset */}
+      <ImportCsvModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImportSuccess={handleImportSuccess}
       />
     </div>
   );

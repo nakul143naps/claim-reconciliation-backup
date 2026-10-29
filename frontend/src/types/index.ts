@@ -92,3 +92,26 @@ export interface ApiError {
     message: string;
   };
 }
+
+export interface RowIssue {
+  row_number: number;
+  record_id: string | null;
+  code: string;
+  message: string;
+}
+
+export interface FileImportResult {
+  filename: string;
+  rows_seen: number;
+  inserted: number;
+  duplicate_noop: number;
+  rejected: number;
+  conflicting_existing_id: number;
+  issues: RowIssue[];
+}
+
+export interface FullImportReport {
+  claims: FileImportResult;
+  remittances: FileImportResult;
+  success: boolean;
+}

@@ -1,6 +1,8 @@
 import {
   ClaimDetail,
   ClaimListResponse,
+  FileImportResult,
+  FullImportReport,
   ReconciliationSummary,
   UnmatchedRemittancesResponse,
 } from '../types';
@@ -56,6 +58,45 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   }
 }
 
+async function uploadFile<T>(endpoint: string, file: File): Promise<T> {
+  const url = `${API_BASE}${endpoint}`;
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      let errorData;
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = { error: { code: 'HTTP_ERROR', message: res.statusText || 'Upload failed' } };
+      }
+      const code = errorData?.error?.code || `HTTP_${res.status}`;
+      const message = errorData?.error?.message || 'An error occurred during file upload';
+      throw new ApiClientError(message, code, res.status);
+    }
+
+    return await res.json();
+  } catch (err) {
+    if (err instanceof ApiClientError) {
+      throw err;
+    }
+    throw new ApiClientError(
+      err instanceof Error ? err.message : 'Network connection failure',
+      'NETWORK_ERROR',
+      0
+    );
+  }
+}
+
 export const api = {
   getHealth: () => request<{ status: string; database: string }>('/health'),
   getSummary: () => request<ReconciliationSummary>('/summary'),
@@ -81,4 +122,8 @@ export const api = {
   getExportUrl: (format: 'csv' | 'json' = 'csv') => `${API_BASE}/claims/export?format=${format}`,
   getClaimById: (claimId: string) => request<ClaimDetail>(`/claims/${encodeURIComponent(claimId)}`),
   getUnmatchedRemittances: () => request<UnmatchedRemittancesResponse>('/remittances/unmatched'),
+  importClaims: (file: File) => uploadFile<FileImportResult>('/import/claims', file),
+  importRemittances: (file: File) => uploadFile<FileImportResult>('/import/remittances', file),
+  resetBenchmark: () => request<FullImportReport>('/import/reset', { method: 'POST' }),
+  getTemplateUrl: (type: 'claims' | 'remittances') => `${API_BASE}/import/templates/${type}`,
 };

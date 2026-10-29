@@ -189,3 +189,47 @@ def test_claims_substring_search(client: TestClient):
     data = response.json()
     assert data["total"] == 1
     assert data["items"][0]["claim_id"] == "C1002"
+
+
+def test_import_claims_csv_upload(client: TestClient):
+    """POST /api/import/claims successfully parses uploaded CSV file."""
+    csv_data = (
+        "claim_id,patient_account,payer,service_date,cpt,billed_cents\n"
+        "C5001,A5001,Northwind Health,2026-10-10,99213,10000\n"
+    )
+    files = {"file": ("test_claims.csv", csv_data.encode("utf-8"), "text/csv")}
+    response = client.post("/api/import/claims", files=files)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["rows_seen"] == 1
+    assert data["inserted"] == 1
+    assert data["rejected"] == 0
+
+
+def test_import_invalid_headers(client: TestClient):
+    """POST /api/import/claims rejects files missing required headers."""
+    bad_csv = "wrong_header1,wrong_header2\n1,2\n"
+    files = {"file": ("bad.csv", bad_csv.encode("utf-8"), "text/csv")}
+    response = client.post("/api/import/claims", files=files)
+    assert response.status_code == 400
+    data = response.json()
+    assert data["error"]["code"] == "INVALID_CSV_HEADERS"
+
+
+def test_import_template_download(client: TestClient):
+    """GET /api/import/templates/claims returns valid downloadable template."""
+    response = client.get("/api/import/templates/claims")
+    assert response.status_code == 200
+    assert "claim_id,patient_account,payer" in response.text
+    assert "attachment; filename=claims_template.csv" in response.headers["content-disposition"]
+
+
+def test_reset_benchmark_endpoint(client: TestClient):
+    """POST /api/import/reset restores canonical 12 claims and 13 remittances benchmark."""
+    response = client.post("/api/import/reset")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert data["claims"]["rows_seen"] == 12
+    assert data["remittances"]["rows_seen"] == 13
+
