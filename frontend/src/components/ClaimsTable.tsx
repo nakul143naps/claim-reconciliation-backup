@@ -87,7 +87,7 @@ export const ClaimsTable: React.FC<Props> = ({
               value={claimIdFilter}
               onChange={(e) => onClaimIdChange(e.target.value)}
               className="input-field"
-              style={{ paddingLeft: '32px', width: '220px' }}
+              style={{ paddingLeft: '32px', width: '190px' }}
             />
           </div>
 
@@ -136,20 +136,20 @@ export const ClaimsTable: React.FC<Props> = ({
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'nowrap', whiteSpace: 'nowrap', flexShrink: 0 }}>
           {/* Entries per page selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             <span>Show:</span>
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               className="select-field"
-              style={{ padding: '0.25rem 0.5rem', fontSize: '0.85rem', height: '32px' }}
+              style={{ padding: '0.2rem 0.45rem', fontSize: '0.85rem', height: '32px' }}
               title="Select number of entries per page"
             >
-              <option value={10}>10 / page</option>
-              <option value={20}>20 / page</option>
-              <option value={50}>50 / page</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
             </select>
           </div>
 
