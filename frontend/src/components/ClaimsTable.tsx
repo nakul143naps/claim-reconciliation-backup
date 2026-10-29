@@ -3,7 +3,8 @@ import { ClaimListItem } from '../types';
 import { formatCurrency, formatRawCents } from '../utils/formatters';
 import { StatusBadge } from './StatusBadge';
 import { FlagBadge } from './FlagBadge';
-import { ChevronLeft, ChevronRight, Eye, Search, RotateCcw } from 'lucide-react';
+import { api } from '../api/client';
+import { ChevronLeft, ChevronRight, Download, Eye, RotateCcw, Search } from 'lucide-react';
 
 interface Props {
   claims: ClaimListItem[];
@@ -12,11 +13,13 @@ interface Props {
   pageSize: number;
   payerFilter: string;
   statusFilter: string;
+  flagFilter: string;
   claimIdFilter: string;
   isLoading: boolean;
   onPageChange: (newPage: number) => void;
   onPayerChange: (payer: string) => void;
   onStatusChange: (status: string) => void;
+  onFlagChange: (flag: string) => void;
   onClaimIdChange: (claimId: string) => void;
   onResetFilters: () => void;
   onSelectClaim: (claimId: string) => void;
@@ -29,31 +32,37 @@ export const ClaimsTable: React.FC<Props> = ({
   pageSize,
   payerFilter,
   statusFilter,
+  flagFilter,
   claimIdFilter,
   isLoading,
   onPageChange,
   onPayerChange,
   onStatusChange,
+  onFlagChange,
   onClaimIdChange,
   onResetFilters,
   onSelectClaim,
 }) => {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
+  const handleExportCsv = () => {
+    window.open(api.getExportUrl(), '_blank');
+  };
+
   return (
     <div className="card">
       <div className="filter-bar">
         <div className="filter-inputs">
-          {/* Claim ID search */}
+          {/* Claim ID & Patient search */}
           <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
             <Search size={14} style={{ position: 'absolute', left: '10px', color: '#94a3b8' }} />
             <input
               type="text"
-              placeholder="Filter by Claim ID..."
+              placeholder="Search Claim ID / Patient..."
               value={claimIdFilter}
               onChange={(e) => onClaimIdChange(e.target.value)}
               className="input-field"
-              style={{ paddingLeft: '32px', width: '190px' }}
+              style={{ paddingLeft: '32px', width: '220px' }}
             />
           </div>
 
@@ -81,8 +90,20 @@ export const ClaimsTable: React.FC<Props> = ({
             <option value="no_remittance">No Remittance</option>
           </select>
 
+          {/* Operational Flag Filter */}
+          <select
+            value={flagFilter}
+            onChange={(e) => onFlagChange(e.target.value)}
+            className="select-field"
+          >
+            <option value="">All Operational Flags</option>
+            <option value="denial_history">Denial History (CO-*)</option>
+            <option value="payment_exceeds_billed">Payment &gt; Billed</option>
+            <option value="payer_mismatch">Payer Mismatch</option>
+          </select>
+
           {/* Reset Filters */}
-          {(payerFilter || statusFilter || claimIdFilter) && (
+          {(payerFilter || statusFilter || flagFilter || claimIdFilter) && (
             <button className="btn" onClick={onResetFilters} title="Reset all active filters">
               <RotateCcw size={13} />
               <span>Reset</span>
@@ -90,8 +111,20 @@ export const ClaimsTable: React.FC<Props> = ({
           )}
         </div>
 
-        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          Showing <strong>{claims.length}</strong> of <strong>{total}</strong> claims
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            Showing <strong>{claims.length}</strong> of <strong>{total}</strong> claims
+          </div>
+
+          {/* Export Audit CSV Button */}
+          <button
+            className="btn btn-primary"
+            onClick={handleExportCsv}
+            title="Download complete reconciliation audit ledger as CSV"
+          >
+            <Download size={14} />
+            <span>Export Audit CSV</span>
+          </button>
         </div>
       </div>
 

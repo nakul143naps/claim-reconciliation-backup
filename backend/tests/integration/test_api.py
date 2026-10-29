@@ -143,3 +143,34 @@ def test_unmatched_remittances_list(client: TestClient):
     assert item["source_claim_id"] == "C9999"
     assert item["paid_cents"] == 5000
     assert item["issue"] == "claim_not_found"
+
+
+def test_claims_export_csv(client: TestClient):
+    """GET /api/claims/export streams a valid reconciliation CSV ledger."""
+    response = client.get("/api/claims/export")
+    assert response.status_code == 200
+    assert "text/csv" in response.headers["content-type"]
+    lines = response.text.strip().split("\n")
+    # 1 header line + 12 claim rows
+    assert len(lines) == 13
+    assert "claim_id,patient_account,payer" in lines[0]
+    assert "C1001" in lines[1]
+
+
+def test_claims_flag_filter(client: TestClient):
+    """GET /api/claims?flag=denial_history filters to exactly 4 claims."""
+    response = client.get("/api/claims?flag=denial_history")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] == 4
+    for item in data["items"]:
+        assert "denial_history" in item["flags"]
+
+
+def test_claims_substring_search(client: TestClient):
+    """Search matches substring on claim ID or patient account."""
+    response = client.get("/api/claims?claim_id=1002")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] == 1
+    assert data["items"][0]["claim_id"] == "C1002"

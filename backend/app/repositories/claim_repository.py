@@ -125,6 +125,7 @@ class ClaimRepository:
         payer: Optional[str] = None,
         status: Optional[str] = None,
         claim_id: Optional[str] = None,
+        flag: Optional[str] = None,
         page: int = 1,
         page_size: int = 10,
     ) -> Tuple[List[ClaimListItem], int]:
@@ -132,7 +133,10 @@ class ClaimRepository:
         query = self.db.query(Claim).options(selectinload(Claim.remittances))
 
         if claim_id:
-            query = query.filter(func.upper(Claim.claim_id) == claim_id.strip().upper())
+            search_term = f"%{claim_id.strip()}%"
+            query = query.filter(
+                Claim.claim_id.ilike(search_term) | Claim.patient_account.ilike(search_term)
+            )
 
         if payer:
             query = query.filter(func.lower(Claim.payer) == payer.strip().lower())
@@ -152,6 +156,9 @@ class ClaimRepository:
             )
 
             if status and claim_status != status.strip().lower():
+                continue
+
+            if flag and flag.strip().lower() not in [f.lower() for f in flags]:
                 continue
 
             calculated_items.append(
@@ -247,3 +254,62 @@ class ClaimRepository:
             )
             for r in records
         ]
+
+    def export_reconciliation_csv(self) -> str:
+        """Generate complete reconciliation audit ledger as CSV formatted string."""
+        import csv
+        import io
+
+        claims = (
+            self.db.query(Claim)
+            .options(selectinload(Claim.remittances))
+            .order_by(Claim.claim_id.asc())
+            .all()
+        )
+
+        output = io.StringIO()
+        writer = csv.writer(output, lineterminator="\n")
+        writer.writerow([
+            "claim_id",
+            "patient_account",
+            "payer",
+            "service_date",
+            "cpt",
+            "billed_cents",
+            "paid_cents",
+            "adjustment_cents",
+            "patient_responsibility_cents",
+            "difference_cents",
+            "status",
+            "flags",
+            "matched_remittances_count",
+        ])
+
+        for claim in claims:
+            matched_remits = [r for r in claim.remittances if r.claim_id == claim.claim_id]
+            totals, status, flags, _ = calculate_claim_reconciliation(
+                billed_cents=claim.billed_cents,
+                matched_remittances=matched_remits,
+                claim_payer=claim.payer,
+            )
+
+            diff_str = str(totals.difference_cents) if totals.difference_cents is not None else ""
+            flags_str = ";".join(flags) if flags else "none"
+
+            writer.writerow([
+                claim.claim_id,
+                claim.patient_account,
+                claim.payer,
+                claim.service_date.isoformat(),
+                claim.cpt,
+                claim.billed_cents,
+                totals.paid_cents,
+                totals.adjustment_cents,
+                totals.patient_responsibility_cents,
+                diff_str,
+                status,
+                flags_str,
+                len(matched_remits),
+            ])
+
+        return output.getvalue()

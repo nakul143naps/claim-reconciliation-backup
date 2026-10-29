@@ -2,7 +2,7 @@
 
 from enum import Enum
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
 from backend.app.db.session import get_db
@@ -19,6 +19,12 @@ class ClaimStatusFilter(str, Enum):
     NO_REMITTANCE = "no_remittance"
 
 
+class ClaimFlagFilter(str, Enum):
+    DENIAL_HISTORY = "denial_history"
+    PAYMENT_EXCEEDS_BILLED = "payment_exceeds_billed"
+    PAYER_MISMATCH = "payer_mismatch"
+
+
 @router.get("", response_model=ClaimListResponse)
 def list_claims(
     payer: Optional[str] = Query(default=None, description="Exact payer name filter"),
@@ -27,7 +33,12 @@ def list_claims(
         alias="status",
         description="Filter by reconciliation status",
     ),
-    claim_id: Optional[str] = Query(default=None, description="Exact claim ID filter"),
+    flag_filter: Optional[ClaimFlagFilter] = Query(
+        default=None,
+        alias="flag",
+        description="Filter by operational flag",
+    ),
+    claim_id: Optional[str] = Query(default=None, description="Search term for claim ID or patient account"),
     page: int = Query(default=1, ge=1, description="Page number, 1-indexed"),
     page_size: int = Query(default=10, ge=1, le=100, description="Items per page (max 100)"),
     db: Session = Depends(get_db),
@@ -35,10 +46,12 @@ def list_claims(
     """Retrieve paginated claims with calculated reconciliation totals and flags."""
     repo = ClaimRepository(db)
     status_str = status_filter.value if status_filter else None
+    flag_str = flag_filter.value if flag_filter else None
     items, total = repo.get_claims_paginated(
         payer=payer,
         status=status_str,
         claim_id=claim_id,
+        flag=flag_str,
         page=page,
         page_size=page_size,
     )
@@ -47,6 +60,18 @@ def list_claims(
         total=total,
         page=page,
         page_size=page_size,
+    )
+
+
+@router.get("/export", response_class=Response)
+def export_claims(db: Session = Depends(get_db)):
+    """Export complete reconciliation audit ledger as a downloadable CSV."""
+    repo = ClaimRepository(db)
+    csv_data = repo.export_reconciliation_csv()
+    return Response(
+        content=csv_data,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=reconciliation_audit_ledger.csv"},
     )
 
 

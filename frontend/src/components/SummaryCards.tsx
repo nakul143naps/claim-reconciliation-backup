@@ -6,9 +6,10 @@ import { FileText, CheckCircle, AlertOctagon, DollarSign, HelpCircle, ShieldAler
 interface Props {
   summary: ReconciliationSummary;
   onFilterStatus?: (status: string) => void;
+  onFilterFlag?: (flag: string) => void;
 }
 
-export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus }) => {
+export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilterFlag }) => {
   return (
     <div className="kpi-grid">
       {/* Total Claims */}
@@ -120,7 +121,12 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus }) => {
       </div>
 
       {/* Denial & Warnings */}
-      <div className="kpi-card">
+      <div
+        className="kpi-card"
+        style={{ cursor: onFilterFlag ? 'pointer' : 'default' }}
+        onClick={() => onFilterFlag && onFilterFlag('denial_history')}
+        title="Click to filter claims queue by Denial History"
+      >
         <div>
           <div className="kpi-label" style={{ color: '#dc2626' }}>
             <span>Denial & Flags</span>

@@ -63,6 +63,7 @@ export const api = {
     payer?: string;
     status?: string;
     claim_id?: string;
+    flag?: string;
     page?: number;
     page_size?: number;
   }) => {
@@ -70,12 +71,14 @@ export const api = {
     if (params?.payer) query.set('payer', params.payer);
     if (params?.status) query.set('status', params.status);
     if (params?.claim_id) query.set('claim_id', params.claim_id);
+    if (params?.flag) query.set('flag', params.flag);
     if (params?.page) query.set('page', params.page.toString());
     if (params?.page_size) query.set('page_size', params.page_size.toString());
 
     const qs = query.toString();
     return request<ClaimListResponse>(`/claims${qs ? `?${qs}` : ''}`);
   },
+  getExportUrl: () => `${API_BASE}/claims/export`,
   getClaimById: (claimId: string) => request<ClaimDetail>(`/claims/${encodeURIComponent(claimId)}`),
   getUnmatchedRemittances: () => request<UnmatchedRemittancesResponse>('/remittances/unmatched'),
 };

@@ -22,6 +22,7 @@ export const App: React.FC = () => {
   const [pageSize] = useState<number>(10);
   const [payerFilter, setPayerFilter] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
+  const [flagFilter, setFlagFilter] = useState<string>('');
   const [claimIdFilter, setClaimIdFilter] = useState<string>('');
   const [loadingClaims, setLoadingClaims] = useState<boolean>(true);
 
@@ -54,6 +55,7 @@ export const App: React.FC = () => {
     api.getClaims({
       payer: payerFilter || undefined,
       status: statusFilter || undefined,
+      flag: flagFilter || undefined,
       claim_id: claimIdFilter || undefined,
       page,
       page_size: pageSize,
@@ -66,7 +68,7 @@ export const App: React.FC = () => {
         setGlobalError(err.message || 'Failed to fetch claims list');
       })
       .finally(() => setLoadingClaims(false));
-  }, [payerFilter, statusFilter, claimIdFilter, page, pageSize]);
+  }, [payerFilter, statusFilter, flagFilter, claimIdFilter, page, pageSize]);
 
   // Load unmatched remittances
   const loadUnmatched = useCallback(() => {
@@ -98,6 +100,7 @@ export const App: React.FC = () => {
   const handleResetFilters = () => {
     setPayerFilter('');
     setStatusFilter('');
+    setFlagFilter('');
     setClaimIdFilter('');
     setPage(1);
   };
@@ -105,6 +108,14 @@ export const App: React.FC = () => {
   const handleKpiStatusClick = (status: string) => {
     setActiveTab('claims');
     setStatusFilter(status);
+    setFlagFilter('');
+    setPage(1);
+  };
+
+  const handleKpiFlagClick = (flag: string) => {
+    setActiveTab('claims');
+    setStatusFilter('');
+    setFlagFilter(flag);
     setPage(1);
   };
 
@@ -206,7 +217,11 @@ export const App: React.FC = () => {
 
         {/* Dashboard KPI Summary Cards */}
         {summary && (
-          <SummaryCards summary={summary} onFilterStatus={handleKpiStatusClick} />
+          <SummaryCards
+            summary={summary}
+            onFilterStatus={handleKpiStatusClick}
+            onFilterFlag={handleKpiFlagClick}
+          />
         )}
 
         {/* Navigation Tabs */}
@@ -234,6 +249,7 @@ export const App: React.FC = () => {
             pageSize={pageSize}
             payerFilter={payerFilter}
             statusFilter={statusFilter}
+            flagFilter={flagFilter}
             claimIdFilter={claimIdFilter}
             isLoading={loadingClaims}
             onPageChange={(p) => setPage(p)}
@@ -243,6 +259,10 @@ export const App: React.FC = () => {
             }}
             onStatusChange={(status) => {
               setStatusFilter(status);
+              setPage(1);
+            }}
+            onFlagChange={(flag) => {
+              setFlagFilter(flag);
               setPage(1);
             }}
             onClaimIdChange={(id) => {
