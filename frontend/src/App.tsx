@@ -136,16 +136,10 @@ export const App: React.FC = () => {
     <div className="app-container">
       {/* Top Navbar */}
       <Navbar
-        currentTab={activeTab}
-        onSelectTab={(tab) => {
-          setActiveTab(tab);
-          if (tab === 'hub') scrollToLedger();
-        }}
         onRequestDemo={() => setIsDemoModalOpen(true)}
         onOpenSignIn={() => setIsSignInModalOpen(true)}
         currentUser={currentUser}
         onSignOut={() => setCurrentUser(null)}
-        totalUnmatchedCount={summary?.unmatched_remittance_count ?? 1}
       />
 
       {/* Main SaaS Content */}
@@ -217,6 +211,28 @@ export const App: React.FC = () => {
               onFilterFlag={handleKpiFlagClick}
             />
           )}
+
+          {/* Workspace Sub-Tabs for Claims vs Unmatched Remittances */}
+          <div className="tabs" style={{ marginBottom: '1.5rem' }}>
+            <button
+              className={`tab-btn ${activeTab === 'hub' ? 'active' : ''}`}
+              onClick={() => setActiveTab('hub')}
+            >
+              Claims Reconciliation ({summary?.total_claims ?? '...'})
+            </button>
+            <button
+              className={`tab-btn ${activeTab === 'unmatched' ? 'active' : ''}`}
+              onClick={() => setActiveTab('unmatched')}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              <span>Unmatched Remittances Queue</span>
+              {(summary?.unmatched_remittance_count ?? 0) > 0 && (
+                <span style={{ background: '#fef3c7', color: '#b45309', padding: '0.1rem 0.45rem', borderRadius: '9999px', fontSize: '0.7rem', fontWeight: 700 }}>
+                  {summary?.unmatched_remittance_count}
+                </span>
+              )}
+            </button>
+          </div>
 
           {/* Tab 1: Claims Reconciliation Ledger */}
           {activeTab === 'hub' && (
