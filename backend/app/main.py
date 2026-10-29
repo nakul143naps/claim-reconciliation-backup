@@ -37,10 +37,11 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Configure CORS for local development frontend
+# Configure CORS for local development and cloud tunneling
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
+    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
