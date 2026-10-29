@@ -1,19 +1,30 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from './api/client';
 import { ClaimListItem, ReconciliationSummary, UnmatchedRemittanceItem } from './types';
+import { Navbar } from './components/Navbar';
+import { HeroSection } from './components/HeroSection';
 import { SummaryCards } from './components/SummaryCards';
 import { ClaimsTable } from './components/ClaimsTable';
 import { ClaimDetailModal } from './components/ClaimDetailModal';
 import { UnmatchedRemittancesTable } from './components/UnmatchedRemittancesTable';
-import { Activity, AlertTriangle, RefreshCw } from 'lucide-react';
+import { HowItWorksSection } from './components/HowItWorksSection';
+import { FeaturesSection } from './components/FeaturesSection';
+import { Footer } from './components/Footer';
+import { RequestDemoModal } from './components/RequestDemoModal';
+import { SignInModal } from './components/SignInModal';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
-  // Navigation tabs
-  const [activeTab, setActiveTab] = useState<'claims' | 'unmatched'>('claims');
+  // Navigation tabs: 'hub' (main ledger) or 'unmatched' (orphaned queue)
+  const [activeTab, setActiveTab] = useState<'hub' | 'unmatched'>('hub');
+
+  // Modals state
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<string | null>('sarah.jenkins@metrohealth.org');
 
   // Summary state
   const [summary, setSummary] = useState<ReconciliationSummary | null>(null);
-  const [healthStatus, setHealthStatus] = useState<string>('checking');
 
   // Claims list state
   const [claims, setClaims] = useState<ClaimListItem[]>([]);
@@ -36,13 +47,9 @@ export const App: React.FC = () => {
   // Error state
   const [globalError, setGlobalError] = useState<string | null>(null);
 
-  // Check health and load summary
+  // Load summary
   const loadInitialData = useCallback(() => {
     setGlobalError(null);
-
-    api.getHealth()
-      .then((res) => setHealthStatus(res.database === 'connected' ? 'connected' : 'degraded'))
-      .catch(() => setHealthStatus('disconnected'));
 
     api.getSummary()
       .then((data) => setSummary(data))
@@ -106,91 +113,44 @@ export const App: React.FC = () => {
   };
 
   const handleKpiStatusClick = (status: string) => {
-    setActiveTab('claims');
+    setActiveTab('hub');
     setStatusFilter(status);
     setFlagFilter('');
     setPage(1);
+    scrollToLedger();
   };
 
   const handleKpiFlagClick = (flag: string) => {
-    setActiveTab('claims');
+    setActiveTab('hub');
     setStatusFilter('');
     setFlagFilter(flag);
     setPage(1);
+    scrollToLedger();
+  };
+
+  const scrollToLedger = () => {
+    document.getElementById('reconciliation-ledger')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <div className="app-container">
       {/* Top Navbar */}
-      <header className="header">
-        <div className="logo-group">
-          <div className="logo-badge">STITCH FIN</div>
-          <div>
-            <h1 className="header-title">Claim Reconciliation & Audit Hub</h1>
-            <p className="header-subtitle">Forward Deployed Engineering · Clinic Revenue Integrity Platform</p>
-          </div>
-        </div>
+      <Navbar
+        currentTab={activeTab}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          if (tab === 'hub') scrollToLedger();
+        }}
+        onRequestDemo={() => setIsDemoModalOpen(true)}
+        onOpenSignIn={() => setIsSignInModalOpen(true)}
+        currentUser={currentUser}
+        onSignOut={() => setCurrentUser(null)}
+        totalUnmatchedCount={summary?.unmatched_remittance_count ?? 1}
+      />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {/* Health Badge */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              fontSize: '0.8rem',
-              padding: '0.3rem 0.75rem',
-              borderRadius: '9999px',
-              fontWeight: 500,
-              background:
-                healthStatus === 'connected'
-                  ? 'var(--success-bg)'
-                  : healthStatus === 'checking'
-                  ? '#f1f5f9'
-                  : 'var(--danger-bg)',
-              color:
-                healthStatus === 'connected'
-                  ? 'var(--success)'
-                  : healthStatus === 'checking'
-                  ? '#64748b'
-                  : 'var(--danger)',
-              border: `1px solid ${
-                healthStatus === 'connected'
-                  ? 'var(--success-border)'
-                  : healthStatus === 'checking'
-                  ? '#cbd5e1'
-                  : 'var(--danger-border)'
-              }`,
-            }}
-          >
-            <Activity size={12} />
-            <span>
-              {healthStatus === 'connected'
-                ? 'MySQL & API Online'
-                : healthStatus === 'checking'
-                ? 'Connecting...'
-                : 'Service Offline'}
-            </span>
-          </div>
-
-          <button
-            className="btn"
-            onClick={() => {
-              loadInitialData();
-              loadClaims();
-              if (activeTab === 'unmatched') loadUnmatched();
-            }}
-            title="Refresh latest data from database"
-          >
-            <RefreshCw size={13} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Main Body */}
+      {/* Main SaaS Content */}
       <main className="main-content">
-        {/* Global Error Banner */}
+        {/* Global Error Alert */}
         {globalError && (
           <div
             style={{
@@ -207,7 +167,7 @@ export const App: React.FC = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <AlertTriangle size={18} />
-              <span><strong>Connection Error:</strong> {globalError}</span>
+              <span><strong>Connection Notice:</strong> {globalError}</span>
             </div>
             <button className="btn" onClick={loadInitialData}>
               Retry Connection
@@ -215,75 +175,106 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* Dashboard KPI Summary Cards */}
-        {summary && (
-          <SummaryCards
-            summary={summary}
-            onFilterStatus={handleKpiStatusClick}
-            onFilterFlag={handleKpiFlagClick}
-          />
-        )}
+        {/* Hero Section */}
+        <HeroSection
+          onScrollToLedger={scrollToLedger}
+          onRequestDemo={() => setIsDemoModalOpen(true)}
+        />
 
-        {/* Navigation Tabs */}
-        <div className="tabs">
-          <button
-            className={`tab-btn ${activeTab === 'claims' ? 'active' : ''}`}
-            onClick={() => setActiveTab('claims')}
-          >
-            Claims Reconciliation ({summary?.total_claims ?? '...'})
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'unmatched' ? 'active' : ''}`}
-            onClick={() => setActiveTab('unmatched')}
-          >
-            Unmatched Remittances ({summary?.unmatched_remittance_count ?? '...'})
-          </button>
+        {/* Live Reconciliation Ledger & KPI Cards Section */}
+        <div id="reconciliation-ledger" style={{ paddingTop: '2.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
+                Live Settlement Ledger
+              </div>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
+                {activeTab === 'hub' ? 'Claims Reconciliation Workspace' : 'Unmatched Remittance Advice Queue'}
+              </h2>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <button
+                className="btn"
+                onClick={() => {
+                  loadInitialData();
+                  loadClaims();
+                  if (activeTab === 'unmatched') loadUnmatched();
+                }}
+                title="Refresh latest ledger records"
+              >
+                <RefreshCw size={13} />
+                <span>Refresh Live Data</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Dashboard KPI Summary Cards */}
+          {summary && (
+            <SummaryCards
+              summary={summary}
+              onFilterStatus={handleKpiStatusClick}
+              onFilterFlag={handleKpiFlagClick}
+            />
+          )}
+
+          {/* Tab 1: Claims Reconciliation Ledger */}
+          {activeTab === 'hub' && (
+            <ClaimsTable
+              claims={claims}
+              total={totalClaims}
+              page={page}
+              pageSize={pageSize}
+              payerFilter={payerFilter}
+              statusFilter={statusFilter}
+              flagFilter={flagFilter}
+              claimIdFilter={claimIdFilter}
+              isLoading={loadingClaims}
+              onPageChange={(p) => setPage(p)}
+              onPayerChange={(payer) => {
+                setPayerFilter(payer);
+                setPage(1);
+              }}
+              onStatusChange={(status) => {
+                setStatusFilter(status);
+                setPage(1);
+              }}
+              onFlagChange={(flag) => {
+                setFlagFilter(flag);
+                setPage(1);
+              }}
+              onClaimIdChange={(id) => {
+                setClaimIdFilter(id);
+                setPage(1);
+              }}
+              onResetFilters={handleResetFilters}
+              onSelectClaim={(id) => setSelectedClaimId(id)}
+            />
+          )}
+
+          {/* Tab 2: Unmatched Remittances Review Queue */}
+          {activeTab === 'unmatched' && (
+            <UnmatchedRemittancesTable
+              items={unmatchedRemittances}
+              isLoading={loadingUnmatched}
+            />
+          )}
         </div>
 
-        {/* Tab 1: Claims Reconciliation */}
-        {activeTab === 'claims' && (
-          <ClaimsTable
-            claims={claims}
-            total={totalClaims}
-            page={page}
-            pageSize={pageSize}
-            payerFilter={payerFilter}
-            statusFilter={statusFilter}
-            flagFilter={flagFilter}
-            claimIdFilter={claimIdFilter}
-            isLoading={loadingClaims}
-            onPageChange={(p) => setPage(p)}
-            onPayerChange={(payer) => {
-              setPayerFilter(payer);
-              setPage(1);
-            }}
-            onStatusChange={(status) => {
-              setStatusFilter(status);
-              setPage(1);
-            }}
-            onFlagChange={(flag) => {
-              setFlagFilter(flag);
-              setPage(1);
-            }}
-            onClaimIdChange={(id) => {
-              setClaimIdFilter(id);
-              setPage(1);
-            }}
-            onResetFilters={handleResetFilters}
-            onSelectClaim={(id) => setSelectedClaimId(id)}
-          />
-        )}
+        {/* How It Works Section (Inspired by ClaimBook / RevSync) */}
+        <HowItWorksSection />
 
-        {/* Tab 2: Unmatched Remittances */}
-        {activeTab === 'unmatched' && (
-          <UnmatchedRemittancesTable
-            items={unmatchedRemittances}
-            isLoading={loadingUnmatched}
-          />
-        )}
+        {/* Features Showcase Section */}
+        <FeaturesSection />
       </main>
 
-      {/* Claim Detail Drawer / Modal */}
+      {/* Footer */}
+      <Footer
+        onRequestDemo={() => setIsDemoModalOpen(true)}
+        onOpenSignIn={() => setIsSignInModalOpen(true)}
+      />
+
+      {/* Claim Detail Modal */}
       {selectedClaimId && (
         <ClaimDetailModal
           claimId={selectedClaimId}
@@ -291,10 +282,18 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Footer */}
-      <footer style={{ borderTop: '1px solid var(--neutral-border)', padding: '1.5rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', background: '#fff' }}>
-        Stitch Financial Take-Home Assessment · Forward Deployed Engineer Assignment · Built with FastAPI, MySQL, React, and Strict Financial Precision
-      </footer>
+      {/* Request Demo Popup Modal */}
+      <RequestDemoModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+      />
+
+      {/* Sign In Popup Modal */}
+      <SignInModal
+        isOpen={isSignInModalOpen}
+        onClose={() => setIsSignInModalOpen(false)}
+        onSuccess={(email) => setCurrentUser(email)}
+      />
     </div>
   );
 };
