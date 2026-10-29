@@ -78,14 +78,25 @@ When a payer sends payment for an unknown claim (e.g. remit `R1012` referencing 
 
 ## 3. Tech Stack
 
-* **Backend**: Python 3.13, FastAPI, SQLAlchemy 2.0, Pydantic v2, PyMySQL, Cryptography.
-* **Database**: MySQL 8.0 (Dockerized) with persistent volumes and healthcheck; SQLite with `StaticPool` for fast in-memory testing.
+* **Backend**: Python 3.13, FastAPI, SQLAlchemy 2.0, Pydantic v2, PyMySQL, Cryptography, python-multipart.
+* **Database**: MySQL 8.0 (Dockerized container `claim_reconciliation_db`) with persistent volumes and healthcheck; SQLite with `StaticPool` for fast in-memory testing.
 * **Frontend**: React 18, TypeScript, Vite, Lucide Icons, Accessible High-Contrast CSS.
-* **Testing**: Pytest, FastAPI TestClient, HTTPX (25 automated unit and integration tests).
+* **Testing**: Pytest, FastAPI TestClient, HTTPX (38 automated unit, integration, and scale tests).
 
 ---
 
-## 4. Repository Structure
+## 4. Key Platform Features
+
+* **3-Way Settlement Ledger**: Visualizes Gross Cash Collected ($990.00 / 58.2%), Contractual Write-offs ($140.00), Patient Responsibility ($75.00), and Net Unsettled AR ($495.00).
+* **Interactive CSV Batch Ingestion**: Drag-and-drop file upload for Claims and Remittances with live row-by-row validation, duplicate skipping, and automatic orphan re-linking regardless of upload order.
+* **1-Click Safety Net ("Reset to Demo Benchmark")**: Instantly flushes test data and restores the official 12 claims / 13 remittances benchmark in milliseconds.
+* **Scale Testing & Pagination Engine**: Tested with both the canonical 12-claim benchmark and an isolated 50-claim enterprise dataset (`data/claims_large.csv`) supporting `Show: 10 / 20 / 50` entries per page.
+* **Clinical Denial Appeal Playbook**: Drilldown modal for claims with historical denials (`CO-16`, `CO-50`, `CO-197`) providing root-cause guidance and copyable formal appeal letters.
+* **Multi-Format Export Engine**: One-click export to CSV, JSON, and Print/PDF.
+
+---
+
+## 5. Repository Structure
 
 ```text
 claim_reconciliation_docs/
@@ -129,7 +140,7 @@ claim_reconciliation_docs/
 
 ---
 
-## 5. Quickstart Guide
+## 6. Quickstart Guide
 
 ### Prerequisites
 * **Docker Desktop** (or native MySQL 8.0)
@@ -161,7 +172,7 @@ python -m venv .venv
 # Install dependencies
 pip install -r requirements.txt
 
-# Run database import script
+# Run database import script (seeds benchmark 12 claims / 13 remittances)
 python -m backend.app.scripts.import_data
 ```
 
@@ -183,18 +194,18 @@ Open your browser at: [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 6. Automated Testing
+## 7. Automated Testing
 
-The project includes 25 automated unit and integration tests covering calculation formulas, duplicate handling, schema validation, HTTP error codes, and edge cases.
+The project includes **38 automated unit, integration, and scale tests** covering calculation formulas, duplicate handling, schema validation, HTTP error codes, orphan quarantine, and 50-claim pagination invariants.
 
 ```bash
 # Run full test suite from project root:
-pytest
+pytest -v
 ```
 
 ---
 
-## 7. What I Would Build Next in Production (Forward Deployed Engineer Perspective)
+## 8. What I Would Build Next in Production (Forward Deployed Engineer Perspective)
 
 1. **Chunked Streaming CSV Pipeline**:
    * For enterprise hospital networks generating multi-gigabyte 835/837 EDI or CSV files, stream processing using Python iterators or Celery/Temporal workers with idempotency keys prevents Out-Of-Memory (OOM) failures.
@@ -207,7 +218,7 @@ pytest
 
 ---
 
-## 8. AI Tool Attribution
+## 9. AI Tool Attribution
 
 In accordance with the assignment instructions:
 * AI assistance (Google DeepMind Antigravity) was used during this take-home to assist in drafting architectural specifications, structuring edge-case unit test fixtures, and accelerating frontend component styling. All business logic, database constraints, calculations, and code implementations were reviewed and verified for production correctness.
