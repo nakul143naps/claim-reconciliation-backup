@@ -133,7 +133,7 @@ flowchart TD
 ## 6. Code Walkthrough: The 4 Key Functions Interviewers Will Ask to See
 
 ### 1. Pure Reconciliation Function
-* **Location**: [`backend/app/services/reconciliation.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/services/reconciliation.py#L23)
+* **Location**: [`backend/app/services/reconciliation.py`](backend/app/services/reconciliation.py#L23)
 * **Function**: `calculate_claim_reconciliation(billed_cents, matched_remittances, claim_payer)`
 * **What it does**:
   - If no remittances: returns totals with `difference_cents = None` and status `"no_remittance"`.
@@ -143,7 +143,7 @@ flowchart TD
   - Flags anomalies: `paid_cents > billed_cents` -> `"payment_exceeds_billed"`.
 
 ### 2. High-Performance Eager Loading Repository
-* **Location**: [`backend/app/repositories/claim_repository.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/repositories/claim_repository.py#L164)
+* **Location**: [`backend/app/repositories/claim_repository.py`](backend/app/repositories/claim_repository.py#L164)
 * **Function**: `get_claims_paginated(payer, status, claim_id, flag, page, page_size)`
 * **What it does**:
   - Uses `selectinload(Claim.remittances)` to prevent the classic **N+1 query problem** (fetches all claims and their child remittances in two optimized queries instead of N queries).
@@ -151,7 +151,7 @@ flowchart TD
   - Sorts deterministically by `claim_id ASC` and applies slicing for pagination (`page_size = 10, 20, 50`).
 
 ### 3. Ingestion Engine with Row-Level Atomic Transactions
-* **Location**: [`backend/app/services/import_service.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/services/import_service.py#L106)
+* **Location**: [`backend/app/services/import_service.py`](backend/app/services/import_service.py#L106)
 * **Function**: `_import_claims_from_handle()` and `_import_remittances_from_handle()`
 * **What it does**:
   - Validates CSV headers upfront; rejects malformed files before touching the database.
@@ -159,7 +159,7 @@ flowchart TD
   - Auto-relinks waiting orphan remittances.
 
 ### 4. One-Click Benchmark Reset
-* **Location**: [`backend/app/services/import_service.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/services/import_service.py#L380)
+* **Location**: [`backend/app/services/import_service.py`](backend/app/services/import_service.py#L380)
 * **Function**: `reset_benchmark_data()`
 * **What it does**:
   - Flushes `remittances` and `claims` honoring foreign key ordering.

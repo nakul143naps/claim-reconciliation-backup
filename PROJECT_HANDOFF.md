@@ -196,7 +196,7 @@ Base URL: `http://localhost:8000`
 | `GET` | `/api/import/templates/{file_type}` | Path: `claims` or `remittances` | Downloads pre-formatted sample CSV template |
 
 ### 4.6 Authentication Flow
-* The platform includes a simulated executive authentication flow ([`frontend/src/components/SignInModal.tsx`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/frontend/src/components/SignInModal.tsx)) storing session identity in local storage.
+* The platform includes a simulated executive authentication flow ([`frontend/src/components/SignInModal.tsx`](frontend/src/components/SignInModal.tsx)) storing session identity in local storage.
 * For enterprise deployment, the architecture is ready to mount FastAPI `OAuth2PasswordBearer` and JWT validation middleware in `backend/app/core/security.py`.
 
 ---

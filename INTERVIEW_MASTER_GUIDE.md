@@ -108,7 +108,7 @@ flowchart TD
 ## 4. Database Deep Dive & Everything MySQL
 
 ### 4.1 Table Definitions & DDL
-The database schema is strictly normalized and enforced in [`backend/app/db/models.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/db/models.py):
+The database schema is strictly normalized and enforced in [`backend/app/db/models.py`](backend/app/db/models.py):
 
 #### Table: `claims`
 ```sql
@@ -383,7 +383,7 @@ SELECT
 These are the 4 most important Python functions in the codebase. Be ready to explain the logic line-by-line:
 
 ### 1. Pure Reconciliation Calculator
-**File**: [`backend/app/services/reconciliation.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/services/reconciliation.py#L23)
+**File**: [`backend/app/services/reconciliation.py`](backend/app/services/reconciliation.py#L23)
 ```python
 def calculate_claim_reconciliation(
     billed_cents: int,
@@ -433,7 +433,7 @@ def calculate_claim_reconciliation(
 ```
 
 ### 2. High-Performance Eager Repository (Eliminating N+1 Queries)
-**File**: [`backend/app/repositories/claim_repository.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/repositories/claim_repository.py#L164)
+**File**: [`backend/app/repositories/claim_repository.py`](backend/app/repositories/claim_repository.py#L164)
 ```python
 def get_claims_paginated(
     self,
@@ -483,7 +483,7 @@ def get_claims_paginated(
 ```
 
 ### 3. Bi-Directional Orphan Re-Linking Ingestion
-**File**: [`backend/app/services/import_service.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/services/import_service.py#L186)
+**File**: [`backend/app/services/import_service.py`](backend/app/services/import_service.py#L186)
 ```python
 # When Claims are imported, check if any orphaned remittances in DB belong to them:
 if seen_in_batch:
@@ -503,7 +503,7 @@ self.db.commit()
 ```
 
 ### 4. Atomic Benchmark Reset
-**File**: [`backend/app/services/import_service.py`](file:///C:/Users/rahul/OneDrive/Desktop/rules_project/claim_reconciliation_docs/backend/app/services/import_service.py#L380)
+**File**: [`backend/app/services/import_service.py`](backend/app/services/import_service.py#L380)
 ```python
 def reset_benchmark_data(self) -> FullImportReport:
     """Wipe database and reload canonical 12 claims and 13 remittances benchmark."""
