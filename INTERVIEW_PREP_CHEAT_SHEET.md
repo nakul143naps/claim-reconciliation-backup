@@ -1,6 +1,8 @@
 # Stitch Financial — FDE Master Interview Prep & Defense Guide
 
-> **Your Personal Cheat Sheet**: Memorize the key phrases, architectural decisions, and numbers in this guide. It gives you verbatim, confident answers for every stage of your interview.
+> **Your Personal Cheat Sheet**: Memorize the key phrases, architectural decisions, and numbers in this guide. It gives you verbatim, confident answers for every stage of your interview.  
+> **Live AWS Deployment**: [http://67.202.41.44:3000](http://67.202.41.44:3000)  
+> **GitHub**: [https://github.com/nakul143naps/claim-reconciliation](https://github.com/nakul143naps/claim-reconciliation)
 
 ---
 

@@ -4,6 +4,7 @@
 > **Document Version**: 1.0  
 > **Date**: October 30, 2026  
 > **Repository**: [https://github.com/nakul143naps/claim-reconciliation](https://github.com/nakul143naps/claim-reconciliation)  
+> **Live AWS Deployment**: [http://67.202.41.44:3000](http://67.202.41.44:3000)  
 > **Purpose**: Complete reference manual and step-by-step transfer guide to deploy, run, test, and defend this platform on any new machine.
 
 ---

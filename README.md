@@ -1,10 +1,10 @@
 # Stitch Financial — Claim Reconciliation Engine
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Cloudflare_Tunnel-2563eb?style=for-the-badge&logo=cloudflare)](https://fairfield-reduction-penny-housewares.trycloudflare.com)
+[![Live Demo on AWS](https://img.shields.io/badge/Live_Demo-AWS_EC2_Deployed-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](http://67.202.41.44:3000)
 [![Tests Passing](https://img.shields.io/badge/Tests-38%2F38_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
 [![MySQL 8.0](https://img.shields.io/badge/Database-MySQL_8.0_Docker-f59e0b?style=for-the-badge&logo=mysql)](https://github.com/nakul143naps/claim-reconciliation)
 
-> 🌐 **Interactive Live Deployment**: [https://fairfield-reduction-penny-housewares.trycloudflare.com](https://fairfield-reduction-penny-housewares.trycloudflare.com)  
+> 🌐 **Live AWS Deployment**: [http://67.202.41.44:3000](http://67.202.41.44:3000)  
 > 📖 **Interview Master Guide & Top 20 SQL Queries**: [`INTERVIEW_MASTER_GUIDE.md`](./INTERVIEW_MASTER_GUIDE.md)  
 > 📋 **Machine Transfer & Complete Architecture**: [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md)  
 > 🎯 **Quick Defense Cheatsheet**: [`INTERVIEW_PREP_CHEAT_SHEET.md`](./INTERVIEW_PREP_CHEAT_SHEET.md)
@@ -216,7 +216,63 @@ pytest -v
 
 ---
 
-## 8. What I Would Build Next in Production (Forward Deployed Engineer Perspective)
+## 8. AWS Cloud Deployment Architecture
+
+The platform is deployed live on **Amazon Web Services (AWS)** at:  
+👉 **[http://67.202.41.44:3000](http://67.202.41.44:3000)**
+
+### 8.1 Cloud Infrastructure Specifications
+* **Cloud Provider**: Amazon Web Services (AWS)
+* **Compute Instance**: EC2 `t3.micro` (2 vCPUs, 1 GiB Physical RAM)
+* **Region**: `us-east-1` (N. Virginia)
+* **Operating System**: Ubuntu 24.04 LTS
+* **Storage**: 20 GiB General Purpose SSD (gp3 EBS Volume) + 2 GiB Swapfile
+* **Security Group Inbound Rules**:
+  - `SSH` (Port 22) ➔ Admin terminal access
+  - `HTTP` (Port 80) ➔ Standard web access
+  - `Custom TCP` (Port 3000) ➔ React Vite Frontend Dashboard
+  - `Custom TCP` (Port 8000) ➔ FastAPI REST API Service
+
+### 8.2 Systems Engineering & Challenges Overcome
+
+#### 1. Dynamic EBS Disk Expansion (Resolving 8 GB Exhaustion)
+* **The Problem**: Default AWS EC2 Ubuntu instances provision with only an 8 GB root volume. After pulling the MySQL 8.0 Docker image, installing build tools, and apt packages, disk utilization reached 99% (`134 MB available`), blocking Node package compilation.
+* **The Engineering Fix**: We modified the AWS EBS volume online from 8 GB to 20 GB (leveraging the 30 GB AWS Free Tier allowance). In the Linux shell, we resized the live partition on-the-fly without downtime:
+  ```bash
+  sudo growpart /dev/xvda 1
+  sudo resize2fs /dev/root
+  ```
+  This immediately unlocked over 13 GB of free storage.
+
+#### 2. Virtual Memory Allocation (2 GB Swapfile)
+* **The Problem**: `t3.micro` instances provide 1 GiB of physical RAM. Running Dockerized MySQL 8.0 (~350 MB) and executing Node.js `npm install` (~500 MB) concurrently caused memory exhaustion and kernel throttling.
+* **The Engineering Fix**: We provisioned a 2 GiB swapfile on the fast NVMe/gp3 SSD:
+  ```bash
+  sudo fallocate -l 2G /swapfile
+  sudo chmod 600 /swapfile
+  sudo mkswap /swapfile
+  sudo swapon /swapfile
+  ```
+  This expanded total usable memory to 3 GiB, permanently preventing Out-Of-Memory (OOM) freezes.
+
+#### 3. Containerized MySQL 8.0 Persistence
+* MySQL runs in an isolated container managed by Docker Compose with persistent data volume `mysql_data:/var/lib/mysql`.
+* Healthchecks query `mysqladmin ping` every 5 seconds.
+* Relational constraints, non-negative checks, and foreign keys (`ON DELETE SET NULL`) enforce financial integrity on the host.
+
+#### 4. Background Process Daemonization
+Both the FastAPI application and the Vite frontend are managed with process isolation:
+```bash
+# Backend Daemon:
+nohup backend/.venv/bin/uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+
+# Frontend Daemon:
+nohup npm run dev > frontend.log 2>&1 &
+```
+
+---
+
+## 9. What I Would Build Next in Production (Forward Deployed Engineer Perspective)
 
 1. **Chunked Streaming CSV Pipeline**:
    * For enterprise hospital networks generating multi-gigabyte 835/837 EDI or CSV files, stream processing using Python iterators or Celery/Temporal workers with idempotency keys prevents Out-Of-Memory (OOM) failures.
@@ -229,7 +285,7 @@ pytest -v
 
 ---
 
-## 9. AI Tool Attribution
+## 10. AI Tool Attribution
 
 In accordance with the assignment instructions:
 * AI assistance (Google DeepMind Antigravity) was used during this take-home to assist in drafting architectural specifications, structuring edge-case unit test fixtures, and accelerating frontend component styling. All business logic, database constraints, calculations, and code implementations were reviewed and verified for production correctness.

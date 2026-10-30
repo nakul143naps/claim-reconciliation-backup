@@ -2,7 +2,7 @@
 # The Comprehensive Interview Master Guide: From Scratch to Advanced
 
 > **Author**: Nakul (Forward Deployed Engineer Candidate)  
-> **Live Demo**: [https://fairfield-reduction-penny-housewares.trycloudflare.com](https://fairfield-reduction-penny-housewares.trycloudflare.com)  
+> **Live Demo on AWS**: [http://67.202.41.44:3000](http://67.202.41.44:3000)  
 > **GitHub Repository**: [https://github.com/nakul143naps/claim-reconciliation](https://github.com/nakul143naps/claim-reconciliation)  
 > **Test Suite**: 38 of 38 Unit, Integration, and Scale Tests Passing (100%)
 
@@ -19,6 +19,7 @@
 8. [Frontend UI & Component Architecture](#8-frontend-ui--component-architecture)
 9. [Edge Cases & How We Solved Them](#9-edge-cases--how-we-solved-them)
 10. [Senior FDE Defense: Scaling, EDI 835/837, & Security](#10-senior-fde-defense-scaling-edi--security)
+11. [AWS Cloud Deployment & Systems Engineering Deep Dive](#11-aws-cloud-deployment--systems-engineering-deep-dive)
 
 ---
 
@@ -589,3 +590,41 @@ When asked: *"How would you scale this to a 500-hospital health system processin
    - Every status change, manual override, or payer payment creates an immutable ledger event with user attribution, cryptographic hash, and before/after balances.
 5. **AI Denial Appeal Assistant**:
    - For claims flagged with `CO-16` or `CO-197`, an LLM agent ingests the electronic health record (EHR), extracts the missing clinical documentation, and drafts the formal payer appeal packet automatically.
+
+---
+
+## 11. AWS Cloud Deployment & Systems Engineering Deep Dive
+
+If the interviewer asks: *"Tell me about how you deployed this to AWS and any infrastructure challenges you solved."*
+
+### The Narrative (Verbatim Interview Script):
+> *"I deployed the application on an AWS EC2 `t3.micro` instance in `us-east-1` (Ubuntu 24.04 LTS). Rather than mocking deployment locally, I wanted to experience and solve real cloud operating constraints.*
+>
+> *During the deployment, I solved two critical systems-level bottlenecks:*
+> 1. ***Live Storage Expansion (EBS Volume Resize)***: *The default AWS 8 GB root volume reached 99% capacity (134 MB left) after pulling the official MySQL 8.0 image and installing build tooling. Rather than recreating the server, I modified the AWS EBS volume online to 20 GB (leveraging the free 30 GB tier) and used `growpart` and `resize2fs` to dynamically expand the partition with zero server downtime.*
+> 2. ***Memory Virtualization (Swap Provisioning)***: *A `t3.micro` instance provides 1 GB of physical RAM. Running containerized MySQL alongside Node.js `npm install` triggered high memory contention. I provisioned a 2 GB swapfile (`/swapfile`) on the gp3 SSD, giving the instance 3 GB of virtual memory and completely eliminating Out-Of-Memory (OOM) process lockups.*
+>
+> *For persistence, I ran MySQL 8.0 inside Docker with an isolated bridge network and volume mapping (`mysql_data`), while managing FastAPI (Uvicorn) and the Vite frontend as daemonized background services on ports 8000 and 3000.*
+>
+> *The entire application is live right now at `http://67.202.41.44:3000`."*
+
+### Key AWS Commands Executed:
+```bash
+# 1. Online EBS Volume Expansion (from 8 GB to 20 GB without reboot)
+sudo growpart /dev/xvda 1
+sudo resize2fs /dev/root
+
+# 2. Virtual Memory (Swapfile) Creation
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# 3. Docker Compose MySQL Startup
+docker compose up -d
+
+# 4. Background Services Launch
+nohup backend/.venv/bin/uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+nohup npm run dev > frontend.log 2>&1 &
+```
+
