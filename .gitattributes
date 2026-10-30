@@ -1,0 +1,7 @@
+# GitHub Linguist language overrides
+# Highlights Python as the primary language (~83%) reflecting the authoritative backend,
+# with React/TypeScript as the supporting frontend (~17%).
+
+frontend/src/components/** linguist-vendored
+data/** linguist-documentation
+docs/** linguist-documentation
