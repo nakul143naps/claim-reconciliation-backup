@@ -34,7 +34,7 @@
 > 3. *Real-world operational flexibility with drag-and-drop CSV batch ingestion, automatic bi-directional orphan re-linking, and a 1-click safety reset.*
 > 4. *Scale-tested pagination engine with 38 automated unit, integration, and property-based tests.*
 >
-> *The entire system is running live right now on a Cloudflare Tunnel with an interactive React UI, FastAPI backend, and MySQL 8.0 database."*
+> *The entire system is running live right now on an AWS EC2 instance with an interactive React UI, FastAPI backend, and MySQL 8.0 database."*
 
 ---
 
@@ -94,8 +94,8 @@ flowchart TD
     end
 
     subgraph UI["5. React 18 + Vite Frontend"]
-        FASTAPI --> TUNNEL["Cloudflare HTTPS Tunnel"]
-        TUNNEL --> DASH["Executive Audit Hub (port 3000)"]
+        FASTAPI --> NGINX["Nginx Reverse Proxy (AWS EC2)"]
+        NGINX --> DASH["Executive Audit Hub (port 80 / 3000)"]
         DASH --> W1["3-Way Live Settlement Ledger"]
         DASH --> W2["Claims Table (Show: 10 / 20 / 50)"]
         DASH --> W3["Denial Appeal Playbook (CO-16, CO-50, CO-197)"]
