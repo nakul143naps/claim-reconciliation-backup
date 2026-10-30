@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Stitch Financial — Executive Project Review</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.5;
+    font-size: 13px;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+  .header {
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    background-color: #dbeafe;
+    color: #1e40af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .aws-badge {
+    background-color: #ffedd5;
+    color: #c2410c;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 4px 0 6px 0;
+  }
+  .meta {
+    font-size: 12px;
+    color: #64748b;
+    display: flex;
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .meta strong {
+    color: #334155;
+  }
+  .link-box {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #2563eb;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .link-box a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+  h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+  p {
+    margin: 4px 0 8px 0;
+  }
+  ul {
+    margin: 4px 0 8px 0;
+    padding-left: 18px;
+  }
+  li {
+    margin-bottom: 3px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 12px;
+  }
+  th {
+    background-color: #f1f5f9;
+    color: #334155;
+    text-align: left;
+    padding: 6px 10px;
+    font-weight: 600;
+    border: 1px solid #cbd5e1;
+  }
+  td {
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  .highlight {
+    background-color: #eff6ff;
+    font-weight: 600;
+    color: #1d4ed8;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 10px 0;
+  }
+  .card {
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .card-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .card-desc {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+  .step-box {
+    background-color: #fafafa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+  }
+  .step-num {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 50%;
+    background-color: #2563eb;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    font-size: 11px;
+    margin-right: 6px;
+  }
+  .footer {
+    margin-top: 25px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 11px;
+    color: #94a3b8;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="badge">Forward Deployed Engineer (FDE) Platform</span>
+  <span class="badge aws-badge">Deployed Live on AWS EC2</span>
+  <h1>Stitch Financial — Claim Reconciliation & Revenue Integrity Platform</h1>
+  <div class="meta">
+    <div><strong>Author:</strong> Nakul</div>
+    <div><strong>Target Reviewer:</strong> Senior Engineering Review (ServiceNow)</div>
+    <div><strong>Date:</strong> October 2026</div>
+  </div>
+</div>
+
+<div class="link-box">
+  <div>🚀 <strong>Live Cloud Deployment (Active Now):</strong></div>
+  <a href="http://67.202.41.44:3000" target="_blank">http://67.202.41.44:3000</a>
+  <div style="font-size: 11px; color: #64748b; margin-top: 4px;">
+    GitHub Source: <code>https://github.com/nakul143naps/claim-reconciliation</code> (38/38 automated tests passing)
+  </div>
+</div>
+
+<h2>1. Executive Summary & Problem Solved</h2>
+<p>
+In healthcare provider billing, clinics submit charges (<strong>Claims</strong>) to health insurers and receive back complex electronic payment advices (<strong>Remittances</strong>). These remittances bundle cash disbursements, contractual discounts, patient copays, and clinical denial codes.
+</p>
+<p>
+Standard enterprise billing systems often lose financial integrity because:
+</p>
+<ul>
+  <li><strong>Floating-point arithmetic drift</strong> (e.g. <code>0.1 + 0.2 = 0.30000000000000004</code>) creates auditing discrepancies.</li>
+  <li><strong>Orphaned payments</strong> (checks received for patient accounts not yet in the billing system) are either discarded (losing cash accountability) or tied to fake dummy accounts (falsely inflating Accounts Receivable).</li>
+  <li><strong>Operational denials vs. mathematical balances</strong>: Claims rejected under authorization codes (e.g. <code>CO-197</code>) that are later resolved and paid with contractual write-offs (<code>CO-45</code>) lose their audit trail.</li>
+</ul>
+<p>
+This platform is a <strong>production-grade reconciliation engine and interactive audit hub</strong> that deterministically balances every transaction, tracks prior denial friction, isolates orphan cash, and provides instant batch CSV ingestion.
+</p>
+
+<h2>2. Tech Stack & Production Cloud Architecture</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technologies Used</th>
+      <th>Key Architectural Rationale</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Frontend</strong></td>
+      <td>React 18.3, TypeScript 5.6, Vite 6, Tailwind CSS, Lucide Icons</td>
+      <td>Single-page application with single-line filter bar, entries-per-page selector (10/20/50), sub-second HMR, and modal drawers.</td>
+    </tr>
+    <tr>
+      <td><strong>Backend API</strong></td>
+      <td>Python 3.13, FastAPI, SQLAlchemy 2.0 ORM, Pydantic v2, PyMySQL</td>
+      <td>Asynchronous REST API, strict request/response data contracts, eager relationship pre-loading (<code>selectinload</code>) eliminating N+1 query overhead.</td>
+    </tr>
+    <tr>
+      <td><strong>Database</strong></td>
+      <td>MySQL 8.0 (Containerized via Docker)</td>
+      <td>Native foreign keys, non-negative <code>CHECK</code> constraints, indexed composite timeline keys, and persistent volume storage.</td>
+    </tr>
+    <tr>
+      <td><strong>Cloud (AWS)</strong></td>
+      <td>Amazon EC2 <code>t3.micro</code>, 20 GB gp3 EBS Volume, 2 GB Swap</td>
+      <td>Deployed in <code>us-east-1</code>. Overcame 8 GB default EBS limits via online partition expansion, and provisioned 2 GB virtual RAM to eliminate OOM bottlenecks.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3. The Live Settlement Ledger: What You Are Seeing</h2>
+<p>
+When you open the live link, the top container renders the <strong>3-Way Settlement Ledger</strong>. Here is the exact financial breakdown of the canonical benchmark:
+</p>
+
+<div class="card-grid">
+  <div class="card">
+    <div class="card-title">Total Billed Charges</div>
+    <div class="card-value">$1,700.00</div>
+    <div class="card-desc">Gross charges submitted by the clinic across all 12 claims.</div>
+  </div>
+  <div class="card" style="border-left: 4px solid #16a34a;">
+    <div class="card-title">Matched Cash Collected</div>
+    <div class="card-value" style="color: #16a34a;">$990.00 (58.2%)</div>
+    <div class="card-desc">Real cash collected against valid, matched patient claims.</div>
+  </div>
+  <div class="card" style="border-left: 4px solid #ea580c;">
+    <div class="card-title">Gross Cash Uncollected</div>
+    <div class="card-value" style="color: #ea580c;">$710.00</div>
+    <div class="card-desc">Total Billed ($1,700) minus Matched Cash Received ($990).</div>
+  </div>
+  <div class="card" style="border-left: 4px solid #2563eb;">
+    <div class="card-title">Net Unsettled AR (Real Variance)</div>
+    <div class="card-value" style="color: #2563eb;">$495.00</div>
+    <div class="card-desc">Outstanding balance after deducting $140 write-offs & $75 copays.</div>
+  </div>
+</div>
+
+<p>
+<strong>Key Balance Formula</strong>: $\text{Difference} = \text{Billed} - \text{Paid} - \text{Contractual Write-Offs} - \text{Patient Copays}$
+</p>
+<ul>
+  <li><strong>5 Claims Balanced ($0 diff)</strong>: Fully settled (e.g., <code>C1001</code>, <code>C1002</code>, <code>C1007</code>, <code>C1008</code>, <code>C1012</code>).</li>
+  <li><strong>6 Claims Unbalanced</strong>: Active variances requiring billing follow-up ($435.00 total).</li>
+  <li><strong>1 Claim Unremitted (<code>C1005</code>)</strong>: Payer has not sent any statement. Difference is strictly <code>null</code> to prevent false receivable debt assumptions ($60.00 billed).</li>
+  <li><strong>1 Orphan Payment (<code>R1012</code>)</strong>: Insurer sent $50.00 referencing non-existent claim <code>C9999</code>. Safely isolated in the Unmatched Queue without distorting claims data.</li>
+</ul>
+
+<h2>4. Interactive Review Checklist: How to Test the Platform</h2>
+<p>Please test these 5 features on the live AWS server:</p>
+
+<div class="step-box">
+  <span class="step-num">1</span>
+  <strong>Open the Dashboard</strong>: Navigate to <a href="http://67.202.41.44:3000">http://67.202.41.44:3000</a>. Notice the single-line header and entries-per-page selector (switch between <code>Show: 10 / 20 / 50</code>).
+</div>
+
+<div class="step-box">
+  <span class="step-num">2</span>
+  <strong>Audit Claim <code>C1007</code></strong>: Click on row <code>C1007</code>. Notice that it is marked <strong>Balanced</strong> ($0 balance), but preserves the <strong>Denial History</strong> badge. The modal reveals that Remittance <code>R1006</code> was originally denied under <code>CO-197</code>, then subsequently settled by <code>R1007</code> ($110 paid, $40 write-off).
+</div>
+
+<div class="step-box">
+  <span class="step-num">3</span>
+  <strong>Test the Clinical Denial Playbook</strong>: In the detail modal, observe the auto-generated root cause analysis and the 1-click copyable formal reconsideration letter.
+</div>
+
+<div class="step-box">
+  <span class="step-num">4</span>
+  <strong>Upload Large Scale Datasets</strong>: Click the <strong>"Import CSV"</strong> button in the table header.
+  <ul>
+    <li>Select the Claims tab and upload <code>claims_large.csv</code> (50 claims).</li>
+    <li>Select the Remittances tab and upload <code>remittances_large.csv</code> (52 remittances).</li>
+    <li>Watch the Live Settlement Ledger recalculate instantly to <strong>$10,085.00 Billed</strong>, <strong>$7,285.00 Paid</strong>, and test pagination across 50 records!</li>
+  </ul>
+</div>
+
+<div class="step-box">
+  <span class="step-num">5</span>
+  <strong>1-Click Safety Net</strong>: Inside the Import modal, click the red <strong>"Reset to Demo Benchmark"</strong> button. The database will atomically restore back to the canonical 12 claims / $1,700 benchmark in milliseconds.
+</div>
+
+<div class="footer">
+  Stitch Financial Engineering Take-Home • Forward Deployed Engineer Candidate Submission • October 2026
+</div>
+
+</body>
+</html>
