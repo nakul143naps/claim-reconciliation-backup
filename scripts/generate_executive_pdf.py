@@ -145,8 +145,8 @@ def build_pdf():
     # 2. Live Cloud URL Box
     link_html = (
         "<b>Live AWS Cloud Deployment:</b> "
-        "<font color='#2563eb'><u>http://67.202.41.44:3000</u></font><br/>"
-        "<font size='8' color='#64748b'>Hosted on AWS EC2 (us-east-1) with Dockerized MySQL 8.0 & FastAPI • "
+        "<font color='#2563eb'><u>http://67.202.41.44</u></font> &nbsp;(or port 3000: <u>http://67.202.41.44:3000</u>)<br/>"
+        "<font size='8' color='#64748b'>Hosted on AWS EC2 (us-east-1) with Nginx Reverse Proxy, Dockerized MySQL 8.0 & FastAPI • "
         "GitHub: <u>https://github.com/nakul143naps/claim-reconciliation</u></font>"
     )
     link_table = Table(

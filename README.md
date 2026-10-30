@@ -1,10 +1,10 @@
 # Stitch Financial — Claim Reconciliation Engine
 
-[![Live Demo on AWS](https://img.shields.io/badge/Live_Demo-AWS_EC2_Deployed-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](http://67.202.41.44:3000)
+[![Live Demo on AWS](https://img.shields.io/badge/Live_Demo-AWS_EC2_Deployed-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](http://67.202.41.44)
 [![Tests Passing](https://img.shields.io/badge/Tests-38%2F38_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
 [![MySQL 8.0](https://img.shields.io/badge/Database-MySQL_8.0_Docker-f59e0b?style=for-the-badge&logo=mysql)](https://github.com/nakul143naps/claim-reconciliation)
 
-> 🌐 **Live AWS Deployment**: [http://67.202.41.44:3000](http://67.202.41.44:3000)  
+> 🌐 **Live AWS Deployment**: [http://67.202.41.44](http://67.202.41.44) (or [http://67.202.41.44:3000](http://67.202.41.44:3000))  
 > 📖 **Interview Master Guide & Top 20 SQL Queries**: [`INTERVIEW_MASTER_GUIDE.md`](./INTERVIEW_MASTER_GUIDE.md)  
 > 📋 **Machine Transfer & Complete Architecture**: [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md)  
 > 🎯 **Quick Defense Cheatsheet**: [`INTERVIEW_PREP_CHEAT_SHEET.md`](./INTERVIEW_PREP_CHEAT_SHEET.md)
